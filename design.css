@@ -1,3 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap');
+/* v6 refresh + new sections */
+:root{--platform-gold:#b08a2e;--px-radius:20px;--px-border:1px solid color-mix(in srgb,var(--site-teal) 22%,transparent)}
+body{font-family:'IBM Plex Sans Arabic',system-ui,'Segoe UI',sans-serif}
+.px-host{display:grid;gap:18px;margin-top:22px}
+.px-section{background:var(--platform-panel);border-radius:var(--px-radius);box-shadow:var(--platform-shadow);border:var(--px-border);padding:20px 18px}
+.px-head h2{margin:0 0 4px;font-size:1.25rem;color:var(--platform-green)}
+.px-head p{margin:0 0 12px;color:var(--site-ink-2,#6c7b73);font-size:.92rem;line-height:1.7}
+.px-head a{color:var(--platform-green)}
+.px-juz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.px-juz-card{border:var(--px-border);border-radius:14px;background:var(--platform-soft);overflow:hidden}
+.px-juz-card summary{cursor:pointer;padding:12px 14px;display:grid;gap:2px;list-style:none}
+.px-juz-card summary::-webkit-details-marker{display:none}
+.px-juz-card summary b{color:var(--platform-green);font-size:1rem}
+.px-juz-card summary small{color:var(--site-ink-2,#6c7b73);font-size:.8rem}
+.px-juz-card[open] summary{border-bottom:var(--px-border)}
+.px-rub-list{display:grid}
+.px-rub{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 14px;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;text-align:start}
+.px-rub:hover{background:var(--platform-tint)}
+.px-rub-ref{color:var(--platform-gold);font-size:.82rem;font-weight:500}
+.reading-division{display:inline-block;margin-inline-start:8px;padding:2px 10px;border-radius:999px;background:var(--platform-tint);color:var(--platform-green);font-size:.78rem;font-weight:500}
+.px-adhkar-tools{margin-bottom:12px}
+.px-adhkar-search{width:100%;padding:11px 14px;border-radius:12px;border:var(--px-border);background:var(--platform-soft);color:inherit;font:inherit;box-sizing:border-box}
+.px-adhkar-list{display:grid;gap:8px}
+.px-adhkar-cat{border:var(--px-border);border-radius:14px;background:var(--platform-soft);overflow:hidden}
+.px-adhkar-cat summary{cursor:pointer;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;list-style:none}
+.px-adhkar-cat summary::-webkit-details-marker{display:none}
+.px-adhkar-cat summary b{color:var(--platform-green)}
+.px-adhkar-cat summary small{color:var(--site-ink-2,#6c7b73)}
+.px-adhkar-cat[open] summary{border-bottom:var(--px-border)}
+.px-dhikr-list{display:grid;gap:10px;padding:12px}
+.px-dhikr{background:var(--platform-panel);border-radius:12px;padding:12px 14px;border:var(--px-border)}
+.px-dhikr p{margin:0;font-family:'Amiri Quran','Amiri',serif;font-size:1.15rem;line-height:2}
+.px-dhikr-count{margin-top:8px;padding:6px 16px;border-radius:999px;border:1px solid var(--platform-green);background:transparent;color:var(--platform-green);font:inherit;font-weight:500;cursor:pointer}
+.px-dhikr-count.done{background:var(--platform-green);color:var(--platform-panel)}
+.px-loading{color:var(--site-ink-2,#6c7b73);text-align:center;padding:14px}
+.px-tasbih{display:grid;gap:14px;justify-items:center}
+.px-tasbih-presets{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.px-preset{padding:8px 14px;border-radius:999px;border:var(--px-border);background:var(--platform-soft);color:inherit;font:inherit;cursor:pointer;font-size:.9rem}
+.px-preset.on{background:var(--platform-green);color:#fff;border-color:var(--platform-green)}
+html[data-theme=dark] .px-preset.on{color:#10201a}
+.px-bead{--p:0;width:190px;height:190px;border-radius:50%;border:0;cursor:pointer;display:grid;place-content:center;gap:4px;color:#fff;background:radial-gradient(circle at 50% 42%,var(--platform-green) 62%,transparent 63%),conic-gradient(var(--platform-gold) calc(var(--p)*1turn),color-mix(in srgb,var(--platform-green) 25%,transparent) 0);font:inherit;box-shadow:0 14px 34px color-mix(in srgb,var(--platform-green) 35%,transparent);transition:transform .08s}
+.px-bead:active{transform:scale(.965)}
+.px-bead-count{font-size:2.6rem;font-weight:700;line-height:1}
+.px-bead-text{font-size:.95rem;opacity:.92;padding-inline:18px}
+.px-bead.full{outline:4px solid var(--platform-gold);outline-offset:4px}
+.px-tasbih-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;color:var(--site-ink-2,#6c7b73);font-size:.92rem}
+.px-target{padding:6px 10px;border-radius:10px;border:var(--px-border);background:var(--platform-soft);color:inherit;font:inherit}
+.px-toast{position:fixed;inset-inline:16px;bottom:76px;margin-inline:auto;max-width:420px;text-align:center;background:var(--platform-green);color:#fff;padding:10px 18px;border-radius:999px;box-shadow:var(--platform-shadow);opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;z-index:60}
+.px-toast.on{opacity:1;transform:none}
+.px-tabs{display:none}
+@media (max-width:899px){
+ body{padding-bottom:64px}
+ .px-tabs{position:fixed;inset-inline:0;bottom:0;z-index:55;display:grid;grid-template-columns:repeat(4,1fr);background:color-mix(in srgb,var(--platform-panel) 88%,transparent);backdrop-filter:blur(14px);border-top:var(--px-border);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+ .px-tabs button{border:0;background:transparent;color:var(--platform-green);font:inherit;font-size:.82rem;font-weight:500;padding:8px 2px;cursor:pointer;border-radius:12px}
+ .px-tabs button:active{background:var(--platform-tint)}
+}
+.px-tafsir{position:fixed;inset:0;z-index:70;background:#0008;display:grid;place-items:end center;padding:16px}
+.px-tafsir-card{background:var(--platform-panel);border-radius:22px 22px 0 0;width:min(560px,100%);padding:18px;display:grid;gap:10px;box-shadow:var(--platform-shadow)}
+@media (min-width:640px){.px-tafsir{place-items:center}.px-tafsir-card{border-radius:22px}}
+.px-tafsir-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.px-tafsir-head h3{margin:0;font-size:1.05rem;color:var(--platform-green)}
+.px-tafsir-note{margin:0;color:var(--site-ink-2,#6c7b73);font-size:.85rem}
+.px-tafsir-src{display:grid;gap:3px;padding:12px 14px;border-radius:14px;border:var(--px-border);background:var(--platform-soft);text-decoration:none;color:inherit}
+.px-tafsir-src:hover{background:var(--platform-tint)}
+.px-tafsir-src b{color:var(--platform-green)}
+.px-tafsir-src small{color:var(--site-ink-2,#6c7b73);line-height:1.7}
+.px-tafsir-src a{color:var(--platform-green)}
+.px-tafsir-src.off{opacity:.75}
+.qr-hero img{border-radius:18px}
+.platform-nav-label small{display:block}
+
 /* Quran platform presentation layer. Religious text is kept in the original payload. */
 :root{--platform-bg:#f4efec;--platform-panel:#fff;--platform-soft:#f5f8f6;--platform-green:#285e50;--platform-tint:#e6f0eb;--site-teal:#366f60;--platform-shadow:0 16px 60px #251f2108;scroll-behavior:smooth}
 html[data-theme=dark]{--platform-bg:#101c19;--platform-panel:#172923;--platform-soft:#1e342c;--platform-green:#b1dbcb;--platform-tint:#294a3d;--site-page:#172923;--site-ink:#f3f0e9;--site-ink-2:#bacbc3;--site-hairline:#355044;--site-teal:#acd6c5;--platform-shadow:0 16px 60px #0002;color-scheme:dark}
