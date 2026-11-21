@@ -1,11 +1,11 @@
 /* Offline Quran reader. No audio, location responses or third-party pages are cached. */
 'use strict';
-const CACHE='quran-kareem-offline-v20';
+const CACHE='quran-kareem-offline-v21';
 const FILES=['index.html','content-1.js','content-2.js','content-3.js','content-divisions.js','design.css','design.js'];
 const base=new URL('./',self.location.href);
 const core=new Set(FILES.map(p=>new URL(p,base).pathname));
 self.addEventListener('install',event=>{
- event.waitUntil((async()=>{const cache=await caches.open(CACHE);await Promise.all(FILES.map(async p=>{const url=new URL(p,base);const fresh=new URL(url);fresh.searchParams.set('v','20');const response=await fetch(new Request(fresh,{cache:'reload'}));if(!response.ok)throw new Error('Offline asset unavailable');await cache.put(url,response)}));await self.skipWaiting()})());
+ event.waitUntil((async()=>{const cache=await caches.open(CACHE);await Promise.all(FILES.map(async p=>{const url=new URL(p,base);const fresh=new URL(url);fresh.searchParams.set('v','21');const response=await fetch(new Request(fresh,{cache:'reload'}));if(!response.ok)throw new Error('Offline asset unavailable');await cache.put(url,response)}));await self.skipWaiting()})());
 });
 self.addEventListener('activate',event=>{
  event.waitUntil((async()=>{
