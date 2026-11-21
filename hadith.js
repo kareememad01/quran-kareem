@@ -1,4 +1,4 @@
-/* Athar Tayeb v24: Hadith library (Sahih al-Bukhari and Sahih Muslim by book) and PDF download sources.
+/* Athar Tayeb v25: Hadith library (Sahih al-Bukhari and Sahih Muslim by book) and PDF download sources.
    Adds behaviour only. The Quran bundle, existing sections and personal data in localStorage are not touched.
    Hadith texts are loaded on demand from ./hadith/*.json and are never stored in the browser. */
 (()=>{
@@ -32,8 +32,8 @@ function build(){
  sec.append(el('h3','platform-section-heading',L('تحميل الكتب (PDF)','Download the books (PDF)')));
  for(const p of PDFS){const c=el('article','at-ruq-card');c.append(el('h3',null,L(p.ar,p.en)));
   const info=el('p','site-caption',L('الحجم: ','Size: ')+p.size+' · '+L('الناشر والمصدر: ','Publisher and source: ')+L(p.pub,p.pubEn)+' · ');info.append(link('IslamHouse',p.page));c.append(info);
-  const row=el('div','at-audio-row');const a=link(L('تحميل PDF','Download PDF'),p.file);a.className='file-button';row.append(a);
-  const b=link(L('صفحة الكتاب في المصدر','Book page at the source'),p.page);b.className='file-button';row.append(b);c.append(row);sec.append(c)}
+  const row=el('div','at-audio-row');const a=el('a',null,L('تحميل PDF','Download PDF'));a.href=p.file;a.setAttribute('download','');a.rel='noopener';a.className='file-button';row.append(a);
+  const b=link(L('صفحة الكتاب في المصدر','Book page at the source'),p.page);b.className='file-button';row.append(b);c.append(row);const raw=el('p','site-caption',L('إن لم يفتح الزر، انسخ هذا الرابط والصقه في المتصفح: ','If the button does not open, copy this link into your browser: '));const u=el('span',null,p.file);u.style.cssText='direction:ltr;unicode-bidi:isolate;word-break:break-all;user-select:all';raw.append(u);c.append(raw);sec.append(c)}
  sec.append(el('p','site-caption',L('الملفات كبيرة، فيُفضّل التحميل عبر Wi‑Fi. تُحمَّل من موقع IslamHouse مباشرة ولا تُخزَّن في هذا الموقع، وهو يتيح نشر موادّه دون تغيير المحتوى مع ذكر المصدر.','These files are large, so use Wi-Fi. They download straight from IslamHouse and are not stored on this site. IslamHouse allows sharing its materials unchanged with credit to the source.')));
  /* browser */
  const host=el('div','at-hadith-host');host.id='at-hadith-host';sec.append(host);
