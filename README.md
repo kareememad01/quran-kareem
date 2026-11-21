@@ -2,11 +2,11 @@
 
 by Kareem Emad
 
-An Arabic Quran reader with all 114 surahs, recitation, Arabic site search, sourced hadith and Quranic duas, a linked religious library, and location-based prayer times and qibla bearing. No AI assistant or religious ruling service is included.
+An Arabic Quran reader with all 114 surahs, recitation, Arabic site search, sourced hadith and Quranic duas, a linked religious library, and location-based prayer times. No AI assistant or religious ruling service is included.
 
 ## Privacy
 
-Device location is requested only after pressing the location button. Coordinates are sent to AlAdhan for prayer and qibla calculations and are not stored by this site. Manual city search uses Open-Meteo/GeoNames. Reading bookmarks stay in the visitor’s browser only. GitHub Pages and external content services may log requests under their own privacy policies.
+Device location is requested only after pressing the location button. Coordinates are sent to AlAdhan for prayer time calculations and are not stored by this site. Manual city search uses Open-Meteo/GeoNames. Reading bookmarks stay in the visitor’s browser only. GitHub Pages and external content services may log requests under their own privacy policies.
 
 ## Sources and licenses
 
@@ -18,7 +18,7 @@ Hadith: https://sunnah.com/bukhari:69 and https://sunnah.com/muslim:55a . Source
 
 Audio: Mishary Alafasy, streamed from Islamic Network for non-commercial use: https://alquran.cloud/terms-and-conditions .
 
-Prayer and qibla calculations: https://aladhan.com/ . Methods and limitations are labeled in the interface. The qibla drawing is north-relative, not a live device compass.
+Prayer time calculations: https://aladhan.com/ . Methods and limitations are labeled in the interface.
 
 City search: https://open-meteo.com/en/docs/geocoding-api (GeoNames data).
 
