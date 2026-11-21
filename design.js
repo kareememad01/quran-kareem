@@ -332,7 +332,7 @@ function init(){
  if(!('serviceWorker' in navigator)){state.textContent='القراءة دون إنترنت غير متاحة في هذا المتصفح';return}
  state.textContent='جارٍ تجهيز المصحف للقراءة دون إنترنت…';
  let reloading=false; const previousController=navigator.serviceWorker.controller; navigator.serviceWorker.addEventListener('controllerchange',()=>{if(previousController&&!reloading){reloading=true;location.reload()}});
- navigator.serviceWorker.register('./sw.js?v=16',{scope:'./',updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{state.dataset.ready='yes';update()}).catch(()=>{state.textContent='لم يكتمل تجهيز النسخة دون إنترنت. افتح الموقع متصلًا وحاول مجددًا.'});
+ navigator.serviceWorker.register('./sw.js?v=17',{scope:'./',updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{state.dataset.ready='yes';update()}).catch(()=>{state.textContent='لم يكتمل تجهيز النسخة دون إنترنت. افتح الموقع متصلًا وحاول مجددًا.'});
  addEventListener('online',update);addEventListener('offline',update);
 }
 const obs=new MutationObserver(()=>{init();if(initialized)obs.disconnect()});obs.observe(document.body,{childList:true,subtree:true});init();
@@ -354,3 +354,6 @@ function init(){
 }
 const observer=new MutationObserver(()=>{init();if(done)observer.disconnect()});observer.observe(document.body,{childList:true,subtree:true});init();
 })();
+
+/* Selecting a visible surah keeps the list available and brings its reading into view. */
+document.addEventListener('click',event=>{if(event.target.closest('.qr-directory .qr-surah'))requestAnimationFrame(()=>document.querySelector('.qr-reader-head')?.scrollIntoView({behavior:document.documentElement.dataset.motion==='off'?'instant':'smooth',block:'start'}))});
