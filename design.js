@@ -131,7 +131,10 @@ async function gotoVerse(s,a){
   if(m&&m.length>=2){const from=parseAr(m[0]),to=parseAr(m[1]);if(a<=to){break}
    const nx=[...root.querySelectorAll('.qr-enter .qr-actions button')].find(x=>x.textContent.trim()==='الصفحة التالية'&&!x.disabled);if(!nx)break;nx.click();await wait(250)}
   else break}
- root.querySelector('.qr-verses')?.scrollIntoView({behavior:motion(),block:'start'});
+ const verseEl=[...root.querySelectorAll('.qr-verse')].find(x=>parseAr(x.querySelector('.qr-ayah-number')?.textContent)===a);
+ if(verseEl){verseEl.scrollIntoView({behavior:motion(),block:'center'});verseEl.classList.add('px-target-verse');setTimeout(()=>verseEl.classList.remove('px-target-verse'),2600)}
+ else root.querySelector('.qr-verses')?.scrollIntoView({behavior:motion(),block:'start'});
+ chipUpdate();
  toast('سورة '+SURAHS[s-1]+' · آية '+arNum(a));
 }
 /* ---- sections ---- */
@@ -200,15 +203,27 @@ adSec.querySelector('.px-adhkar-search').addEventListener('input',e=>drawAdhkar(
  tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset.t;
   if(t==='mushaf'){const home=[...document.querySelectorAll('#platform-navigation a')].find(x=>x.getAttribute('href')==='#/');home?.click();root.querySelector('.qr-enter')?.scrollIntoView({behavior:motion(),block:'start'})}
   else document.getElementById(t)?.scrollIntoView({behavior:motion(),block:'start'})});
- /* division chip in pager */
- const chipTimer=setInterval(()=>{
+ /* division chip tracks the verse actually in view; pager hides outside the reader */
+ function chipUpdate(){
   const pager=document.querySelector('.reading-pager');if(!pager)return;
   let chip=pager.querySelector('.reading-division');
   if(!chip){chip=document.createElement('span');chip.className='reading-division';const pt=pager.querySelector('.reading-progress-text');pt?pt.after(chip):pager.append(chip)}
-  const s=currentSurah();const cap=[...root.querySelectorAll('.site-caption')].map(x=>x.textContent).find(t=>t.includes('الآيات'));
-  const m=(cap||'').match(/[٠-٩]+/g);
-  chip.textContent=(s&&m&&m.length)?divisionLabel(s,parseAr(m[0])):'';
- },700);
+  const s=currentSurah();if(!s){chip.textContent='';return}
+  const vs=[...root.querySelectorAll('.qr-verse')];
+  const top=vs.find(x=>x.getBoundingClientRect().bottom>140)||vs[vs.length-1];
+  const a=top?parseAr(top.querySelector('.qr-ayah-number')?.textContent):null;
+  chip.textContent=a?divisionLabel(s,a):'';
+ }
+ function pagerVis(){
+  const pager=document.querySelector('.reading-pager');if(!pager)return;
+  const r=root.querySelector('.qr-enter');
+  if(!r)return;
+  const rect=r.getBoundingClientRect();
+  pager.classList.toggle('px-hidden',rect.bottom<60||rect.top>innerHeight);
+ }
+ setInterval(()=>{chipUpdate();pagerVis()},700);
+ let chipTick=false;
+ addEventListener('scroll',()=>{pagerVis();if(!chipTick){chipTick=true;requestAnimationFrame(()=>{chipUpdate();chipTick=false})}},{passive:true});
  /* tasbih */
  const PRESETS=['سبحان الله','الحمد لله','الله أكبر','لا إله إلا الله','أستغفر الله','لا حول ولا قوة إلا بالله','سبحان الله وبحمده','اللهم صلِّ على محمد'];
  let st;try{st=JSON.parse(localStorage.getItem('quran.tasbih.v1'))||{}}catch{st={}}
