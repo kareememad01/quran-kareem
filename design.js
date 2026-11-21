@@ -39,8 +39,8 @@ const observer=new MutationObserver(()=>{start();if(started)observer.disconnect(
 (()=>{'use strict';const root=document.getElementById('root');let bar,selected=null,lastTitle='',mode;try{mode=localStorage.getItem('quran.ui.reading')||'continuous'}catch{mode='continuous'}const bound=new WeakSet();
 function close(){selected?.classList.remove('platform-verse-active');selected=null;if(bar)bar.hidden=true}
 function select(verse){close();selected=verse;verse.classList.add('platform-verse-active');bar.hidden=false;bar.querySelector('.platform-verse-label').textContent='الآية '+verse.querySelector('.qr-ayah-number').textContent.replace(/[﴿﴾]/g,'').trim();bar.querySelector('.platform-bar-mark').setAttribute('aria-pressed',String(verse.classList.contains('qr-marked')))}
-function setup(){const panel=root.querySelector('.qr-enter'),verses=panel?.querySelector('.qr-verses');if(!verses){close();return}if(!bar){bar=document.createElement('div');bar.className='platform-verse-bar';bar.hidden=true;bar.setAttribute('role','region');bar.setAttribute('aria-label','إجراءات الآية المختارة');bar.innerHTML='<span class="platform-verse-label"></span><button type="button" class="platform-button platform-bar-listen">▷ استماع</button><button type="button" class="platform-button platform-bar-mark">◇ علامة</button><button type="button" class="platform-button platform-bar-copy">نسخ</button><button type="button" class="platform-button platform-bar-close" aria-label="إغلاق إجراءات الآية">×</button>';document.body.append(bar);bar.querySelector('.platform-bar-close').addEventListener('click',close);['listen','mark','copy'].forEach((action,i)=>bar.querySelector('.platform-bar-'+action).addEventListener('click',()=>{const buttons=selected?.querySelectorAll('.qr-verse-controls button');buttons?.[i]?.click();if(action==='copy')setTimeout(()=>{const result=selected?.querySelector('.site-copy [role=status]')?.textContent||selected?.querySelector('.site-copy button')?.textContent;bar.querySelector('.platform-verse-label').textContent=result||'تحقق من إذن الحافظة في المتصفح'},200);if(action==='mark')setTimeout(()=>bar.querySelector('.platform-bar-mark').setAttribute('aria-pressed',String(selected?.classList.contains('qr-marked'))),0)}));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()})}
-const title=panel.querySelector('.qr-reader-head h2')?.textContent;if(lastTitle!==title){close();lastTitle=title}if(selected&&!selected.isConnected)close();panel.classList.toggle('platform-mushaf',mode==='continuous');let tools=panel.querySelector('.platform-reader-tools');if(!tools){tools=document.createElement('div');tools.className='platform-reader-tools';tools.innerHTML='<div class="platform-reader-switch" role="group" aria-label="طريقة عرض الآيات"><button type="button" class="platform-button platform-continuous">عرض المصحف</button><button type="button" class="platform-button platform-detailed">آية بآية</button></div><button type="button" class="platform-button platform-audio-settings" aria-pressed="false">إعدادات التلاوة</button>';panel.querySelector('.qr-reader-head').after(tools);const note=document.createElement('p');note.className='platform-reader-note';note.textContent='عرض متصل مستوحى من هدوء المصحف. اضغط آية للاستماع أو الحفظ أو النسخ. التقسيم هنا ٢٠ آية للعرض، وليس مطابقًا لصفحات مصحف المدينة.';tools.after(note);for(const[k,name]of[['continuous','continuous'],['detailed','detailed']])tools.querySelector('.platform-'+name).addEventListener('click',()=>{mode=k;try{localStorage.setItem('quran.ui.reading',mode)}catch{}close();setup()});tools.querySelector('.platform-audio-settings').addEventListener('click',e=>{panel.classList.toggle('platform-audio-open');e.currentTarget.setAttribute('aria-pressed',String(panel.classList.contains('platform-audio-open')))})}
+function setup(){const panel=root.querySelector('.qr-enter'),verses=panel?.querySelector('.qr-verses');if(!verses){close();return}if(!bar){bar=document.createElement('div');bar.className='platform-verse-bar';bar.hidden=true;bar.setAttribute('role','region');bar.setAttribute('aria-label','إجراءات الآية المختارة');bar.innerHTML='<span class="platform-verse-label"></span><button type="button" class="platform-button platform-bar-listen">▷ استماع</button><button type="button" class="platform-button platform-bar-mark">◇ علامة</button><button type="button" class="platform-button platform-bar-tafsir">تفسير</button><button type="button" class="platform-button platform-bar-copy">نسخ</button><button type="button" class="platform-button platform-bar-close" aria-label="إغلاق إجراءات الآية">×</button>';document.body.append(bar);bar.querySelector('.platform-bar-close').addEventListener('click',close);['listen','mark','copy'].forEach((action,i)=>bar.querySelector('.platform-bar-'+action).addEventListener('click',()=>{const buttons=selected?.querySelectorAll('.qr-verse-controls button');buttons?.[i]?.click();if(action==='copy')setTimeout(()=>{const result=selected?.querySelector('.site-copy [role=status]')?.textContent||selected?.querySelector('.site-copy button')?.textContent;bar.querySelector('.platform-verse-label').textContent=result||'تحقق من إذن الحافظة في المتصفح'},200);if(action==='mark')setTimeout(()=>bar.querySelector('.platform-bar-mark').setAttribute('aria-pressed',String(selected?.classList.contains('qr-marked'))),0)}));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()})}
+const title=panel.querySelector('.qr-reader-head h2')?.textContent;if(lastTitle!==title){close();lastTitle=title}if(selected&&!selected.isConnected)close();panel.classList.toggle('platform-mushaf',mode==='continuous');let tools=panel.querySelector('.platform-reader-tools');if(!tools){tools=document.createElement('div');tools.className='platform-reader-tools';tools.innerHTML='<div class="platform-reader-switch" role="group" aria-label="طريقة عرض الآيات"><button type="button" class="platform-button platform-continuous">عرض المصحف</button><button type="button" class="platform-button platform-detailed">آية بآية</button></div><button type="button" class="platform-button platform-audio-settings" aria-pressed="false">إعدادات التلاوة</button>';panel.querySelector('.qr-reader-head').after(tools);const note=document.createElement('p');note.className='platform-reader-note';note.textContent='عرض متصل مستوحى من هدوء المصحف. اضغط آية للاستماع أو الحفظ أو النسخ. التنقل بالصفحات لتيسير العرض فقط. الأجزاء والأحزاب والأرباع بتقسيم مصحف المدينة تجدها في فهرس التقسيم أسفل الصفحة.';tools.after(note);for(const[k,name]of[['continuous','continuous'],['detailed','detailed']])tools.querySelector('.platform-'+name).addEventListener('click',()=>{mode=k;try{localStorage.setItem('quran.ui.reading',mode)}catch{}close();setup()});tools.querySelector('.platform-audio-settings').addEventListener('click',e=>{panel.classList.toggle('platform-audio-open');e.currentTarget.setAttribute('aria-pressed',String(panel.classList.contains('platform-audio-open')))})}
 tools.querySelector('.platform-continuous').setAttribute('aria-pressed',String(mode==='continuous'));tools.querySelector('.platform-detailed').setAttribute('aria-pressed',String(mode!=='continuous'));verses.querySelectorAll('.qr-verse').forEach(v=>{if(bound.has(v))return;bound.add(v);v.tabIndex=0;v.setAttribute('aria-label','اختيار الآية '+v.querySelector('.qr-ayah-number').textContent);v.addEventListener('click',e=>{if(mode==='continuous'&&!e.target.closest('button'))select(v)});v.addEventListener('keydown',e=>{if(mode==='continuous'&&(e.key==='Enter'||e.key===' ')){e.preventDefault();select(v)}})})}
 new MutationObserver(setup).observe(root,{subtree:true,childList:true});setup();})();
 
@@ -97,4 +97,168 @@ function syncPager(){
 }
 new MutationObserver(syncPager).observe(root,{subtree:true,childList:true});
 syncPager();
+})();
+
+/* ==== v6: فهرس التقسيم + الأذكار + السبحة + التفسير (روابط المصادر) ==== */
+(()=>{
+'use strict';
+const root=document.getElementById('root');
+const AR='٠١٢٣٤٥٦٧٨٩';
+const parseAr=s=>{const m=String(s||'').replace(/[٠-٩]/g,d=>AR.indexOf(d)).match(/\d+/);return m?+m[0]:null};
+const arNum=n=>Number(n).toLocaleString('ar-EG',{useGrouping:false});
+const SURAHS=["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","ابراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبإ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الانسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+const UTH=new Set([1,2,3,4,5,6,18,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,49,50,51,52,53,54,55,56,57,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114]);
+const motion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.dataset.motion==='off'?'instant':'smooth';
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function toast(t){let el=document.querySelector('.px-toast');if(!el){el=document.createElement('div');el.className='px-toast';el.setAttribute('role','status');document.body.append(el)}el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2600)}
+/* ---- division helpers ---- */
+function cumCounts(){const D=window.__quran_divisions;if(!D._cum){let s=0;D._cum=D.counts.map(c=>s+=c)}return D._cum}
+const absV=(s,a)=>cumCounts()[s-2||0]===undefined?a-1:(s===1?a-1:cumCounts()[s-2]+a-1);
+function divisionLabel(s,a){const D=window.__quran_divisions;if(!D)return'';const idx=absV(s,a);let qi=0;for(let i=0;i<240;i++){const[qs,qa]=D.quarters[i];if(absV(qs,qa)<=idx)qi=i;else break}
+const juz=Math.floor(qi/8)+1,hizb=Math.floor(qi/4)+1,rub=qi%4+1;return'الجزء '+arNum(juz)+' · الحزب '+arNum(hizb)+' · الربع '+arNum(rub)}
+function currentSurah(){const h=root.querySelector('.qr-reader-head h2');if(!h)return null;const n=h.textContent.replace('سورة','').trim();const i=SURAHS.indexOf(n);return i<0?null:i+1}
+/* ---- navigate to any verse ---- */
+async function gotoVerse(s,a){
+ toast('جارٍ الانتقال إلى سورة '+SURAHS[s-1]+' · آية '+arNum(a));
+ if(location.hash&&location.hash!=='#/'){const home=[...document.querySelectorAll('#platform-navigation a')].find(x=>x.getAttribute('href')==='#/');home?.click();await wait(400)}
+ let list=[...root.querySelectorAll('.qr-surah')];
+ if(!list.length){const idx=[...root.querySelectorAll('button')].find(b=>b.textContent.includes('فهرس السور'));idx?.click();await wait(500);list=[...root.querySelectorAll('.qr-surah')]}
+ const btn=list[s-1];if(!btn){toast('تعذر فتح فهرس السور');return}
+ if(!btn.classList.contains('qr-selected')){btn.click();await wait(500)}
+ for(let i=0;i<20;i++){
+  const cap=[...root.querySelectorAll('.site-caption')].map(x=>x.textContent).find(t=>t.includes('الآيات'));
+  const m=(cap||'').match(/[٠-٩]+/g);
+  if(m&&m.length>=2){const from=parseAr(m[0]),to=parseAr(m[1]);if(a<=to){break}
+   const nx=[...root.querySelectorAll('.qr-enter .qr-actions button')].find(x=>x.textContent.trim()==='الصفحة التالية'&&!x.disabled);if(!nx)break;nx.click();await wait(250)}
+  else break}
+ root.querySelector('.qr-verses')?.scrollIntoView({behavior:motion(),block:'start'});
+ toast('سورة '+SURAHS[s-1]+' · آية '+arNum(a));
+}
+/* ---- sections ---- */
+let built=false;
+function build(){
+ const main=document.querySelector('.site-card');
+ if(!main||built||!window.__quran_divisions)return;built=true;
+ const D=window.__quran_divisions;
+ const host=document.createElement('div');host.className='px-host';
+ /* فهرس التقسيم */
+ const juzSec=document.createElement('section');juzSec.className='px-section';juzSec.id='px-juz';
+ juzSec.innerHTML='<header class="px-head"><h2>فهرس التقسيم</h2><p>تقسيم مصحف المدينة: ٣٠ جزءًا، ٦٠ حزبًا، ٢٤٠ ربع حزب — اضغط أي موضع للانتقال إليه في المصحف.</p></header>';
+ const grid=document.createElement('div');grid.className='px-juz-grid';
+ for(let j=0;j<30;j++){
+  const det=document.createElement('details');det.className='px-juz-card';
+  const[js_,ja]=D.juz[j];
+  const sum=document.createElement('summary');sum.innerHTML='<b>الجزء '+arNum(j+1)+' · '+D.juzNames[j]+'</b><small>يبدأ من '+SURAHS[js_-1]+' · آية '+arNum(ja)+'</small>';det.append(sum);
+  const rows=document.createElement('div');rows.className='px-rub-list';
+  for(let k=0;k<8;k++){const qi=j*8+k;const[qs,qa]=D.quarters[qi];
+   const row=document.createElement('button');row.type='button';row.className='px-rub';
+   row.innerHTML='<span>الحزب '+arNum(Math.floor(qi/4)+1)+' · الربع '+arNum(qi%4+1)+'</span><span class="px-rub-ref">'+SURAHS[qs-1]+' · آية '+arNum(qa)+'</span>';
+   row.addEventListener('click',()=>gotoVerse(qs,qa));rows.append(row)}
+  det.append(rows);grid.append(det)}
+ juzSec.append(grid);host.append(juzSec);
+ /* الأذكار — فهرس أقسام حصن المسلم على موقعه الرسمي */
+const ADHKAR=[[0,"أذكار النوم",13],[2,"دعاء ُلبْس الثوب",1],[3,"دعاء ُلبْس الثوب الجديد",1],[4,"الدعاء لمن لبس ثوبا جديدا",2],[5,"ما يقول إذا وضع ثوبه",1],[6,"دعاء دخول الخلاء",1],[7,"دعاء الخروج من الخلاء",1],[8,"الذكر قبل الوضوء",1],[9,"الذكر بعد الفراغ من الوضوء",3],[10,"الذكر عند الخروج من المنزل",2],[11,"الذكر عند دخول المنزل",1],[12,"دعاء الذهاب إلى المسجد",1],[13,"دعاء دخول المسجد",1],[14,"دعاء الخروج من المسجد",1],[15,"أذكار الآذان",5],[16,"دعاء الاستفتاح",6],[17,"دعاء الركوع",5],[18,"دعاء الرفع من الركوع",3],[19,"دعاء السجود",7],[20,"دعاء الجلسة بين السجدتين",2],[21,"دعاء سجود التلاوة",2],[22,"التشهد",1],[23,"الصلاة على النبي بعد التشهد",2],[24,"الدعاء بعد التشهد الأخير قبل السلام",11],[25,"الأذكار بعد السلام من الصلاة",8],[26,"دعاء صلاة الاستخارة",1],[27,"أذكار الصباح والمساء",24],[28,"أذكار الاستيقاظ من النوم",4],[29,"الدعاء إذا تقلب ليلا",1],[30,"دعاء الفزع في النوم و من بُلِيَ بالوحشة",1],[31,"ما يفعل من رأى الرؤيا أو الحلم",2],[32,"دعاء قنوت الوتر",3],[33,"الذكر عقب السلام من الوتر",1],[34,"دعاء الهم والحزن",2],[35,"دعاء الكرب",4],[36,"دعاء لقاء العدو و ذي السلطان",3],[37,"دعاء من خاف ظلم السلطان",2],[38,"الدعاء على العدو",1],[39,"ما يقول من خاف قوما",1],[40,"دعاء من أصابه وسوسة في الإيمان",3],[41,"دعاء قضاء الدين",2],[42,"دعاء الوسوسة في الصلاة و القراءة",1],[43,"دعاء من استصعب عليه أمر",1],[44,"ما يقول ويفعل من أذنب ذنبا",1],[45,"دعاء طرد الشيطان و وساوسه",3],[46,"الدعاء حينما يقع ما لا يرضاه أو ُ غلب على أمره",1],[47,"ﺗﻬنئة المولود له وجوابه",1],[48,"ما يعوذ به الأولاد",1],[49,"الدعاء للمريض في عيادته",2],[50,"فضل عيادة المريض",1],[51,"دعاء المريض الذي يئس من حياته",3],[52,"تلقين المحتضر",1],[53,"دعاء من أصيب بمصيبة",1],[54,"الدعاء عند إغماض الميت",1],[55,"الدعاء للميت في الصلاة عليه",4],[56,"الدعاء للفرط في الصلاة عليه",2],[57,"دعاء التعزية",1],[58,"الدعاء عند إدخال الميت القبر",1],[59,"الدعاء بعد دفن الميت",1],[60,"دعاء زيارة القبور",1],[61,"دعاء الريح",2],[62,"دعاء الرعد",1],[63,"من أدعية الاستسقاء",3],[64,"الدعاء إذا نزل المطر",1],[65,"الذكر بعد نزول المطر",1],[66,"من أدعية الاستصحاء",1],[67,"دعاء رؤية الهلال",1],[68,"الدعاء عند إفطار الصائم",2],[69,"الدعاء قبل الطعام",2],[70,"الدعاء عند الفراغ من الطعام",2],[71,"دعاء الضيف لصاحب الطعام",1],[72,"التعريض بالدعاء لطلب الطعام أو الشراب",1],[73,"الدعاء إذا أفطر عند أهل بيت",1],[74,"دعاء الصائم إذا حضر الطعام ولم يفطر",1],[75,"ما يقول الصائم إذا سابه أحد",1],[76,"الدعاء عند رؤية باكورة الثمر",1],[77,"دعاء العطاس",1],[78,"ما يقال للكافر إذا عطس فحمد الله",1],[79,"الدعاء للمتزوج",1],[80,"دعاء المتزوج و شراء الدابة",1],[81,"الدعاء قبل إتيان الزوجة",1],[82,"دعاء الغضب",1],[83,"دعاء من رأى مبتلى",1],[84,"ما يقال في اﻟﻤﺠلس",1],[85,"كفارة اﻟﻤﺠلس",1],[86,"الدعاء لمن قال غفر الله لك",1],[87,"الدعاء لمن صنع إليك معروفا",1],[88,"ما يعصم الله به من الدجال",1],[89,"الدعاء لمن قال إني أحبك في الله",1],[90,"الدعاء لمن عرض عليك ماله",1],[91,"الدعاء لمن أقرض عند القضاء",1],[92,"دعاء الخوف من الشرك",1],[93,"الدعاء لمن قال بارك الله فيك",1],[94,"دعاء كراهية الطيرة",1],[95,"دعاء الركوب",1],[96,"دعاء السفر",1],[97,"دعاء دخول القرية أو البلدة",1],[98,"دعاء دخول السوق",1],[99,"الدعاء إذا تعس المركوب",1],[100,"دعاء المسافر للمقيم",1],[101,"دعاء المقيم للمسافر",2],[102,"التكبير و التسبيح في سير السفر",1],[103,"دعاء المسافر إذا أسحر",1],[104,"الدعاء إذا نزل مترلا في سفر أو غيره",1],[105,"ذكر الرجوع من السفر",1],[106,"ما يقول من أتاه أمر يسره أو يكرهه",1],[107,"فضل الصلاة على النبي صلى الله عليه و سلم",5],[108,"إفشاء السلام",3],[109,"كيف يرد السلام على الكافر إذا سلم",1],[110,"الدُّعاءُ عِنْدَ سَمَاعِ صِياحِ الدِّيكِ ونَهِيقِ الْحِمَارِ",1],[111,"دعاء نباح الكلاب بالليل",1],[112,"الدعاء لمن سببته",1],[113,"ما يقول المسلم إذا مدح المسلم",1],[114,"ما يقول المسلم إذا زكي",1],[115,"كيف يلبي المحرم في الحج أو العمرة ؟",1],[116,"التكبير إذا أتى الركن الأسود",1],[117,"الدعاء بين الركن اليماني والحجر الأسود",1],[118,"دعاء الوقوف على الصفا والمروة",1],[119,"الدعاء يوم عرفة",1],[120,"الذكر عند المشعر الحرام",1],[121,"التكبير عند رمي الجمار مع كل حصاة",1],[122,"دعاء التعجب والأمر السار",2],[123,"ما يفعل من أتاه أمر يسره",1],[124,"ما يقول من أحس وجعا في جسده",1],[125,"دعاء من خشي أن يصيب شيئا بعينه",1],[126,"ما يقال عند الفزع",1],[127,"ما يقول عند الذبح أو النحر",1],[128,"ما يقول لرد كيد مردة الشياطين",1],[129,"الاستغفار و التوبة",6],[130,"فضل التسبيح و التحميد، و التهليل، و التكبير",12],[131,"كيف كان النبي يسبح؟",1],[132,"من أنواع الخير والآداب الجامعة",1]];
+const ADHKAR_TOTAL=267;
+const adSec=document.createElement('section');adSec.className='px-section';adSec.id='px-adhkar';
+adSec.innerHTML='<header class="px-head"><h2>الأذكار</h2><p>فهرس كتاب «حصن المسلم من أذكار الكتاب والسنة» لسعيد بن علي بن وهف القحطاني رحمه الله — '+arNum(ADHKAR.length)+' قسمًا، '+arNum(ADHKAR_TOTAL)+' ذكرًا ودعاءً. يفتح كل قسم على <a href="https://hisnmuslim.com/" target="_blank" rel="noopener">الموقع الرسمي للكتاب</a> في تبويب جديد.</p></header><div class="px-adhkar-tools"><input type="search" class="px-adhkar-search" placeholder="ابحث في الأذكار… مثل: النوم، الصلاة، السفر" aria-label="بحث في الأذكار"></div><div class="px-adhkar-list"></div>';
+host.append(adSec);
+function drawAdhkar(filter){
+ const listEl=adSec.querySelector('.px-adhkar-list');listEl.textContent='';let shown=0;
+ for(const[id,name,count]of ADHKAR){
+  if(filter&&!name.includes(filter))continue;shown++;
+  const a=document.createElement('a');a.className='px-adhkar-cat';a.href='https://hisnmuslim.com/i/ar/'+id;a.target='_blank';a.rel='noopener';
+  const b=document.createElement('b');b.textContent=name;
+  const sm=document.createElement('small');sm.textContent=arNum(count)+' ذكر ↗';
+  a.append(b,sm);listEl.append(a)}
+ if(!shown){const p=document.createElement('p');p.className='px-loading';p.textContent='لا نتائج مطابقة.';listEl.append(p)}}
+drawAdhkar('');
+adSec.querySelector('.px-adhkar-search').addEventListener('input',e=>drawAdhkar(e.target.value.trim()));
+/* السبحة */
+ const taSec=document.createElement('section');taSec.className='px-section';taSec.id='px-tasbih';
+ taSec.innerHTML='<header class="px-head"><h2>السبحة الإلكترونية</h2><p>اضغط الدائرة أو مسطرة المسافة للتسبيح. يُحفظ مجموعك على هذا المتصفح.</p></header>\
+ <div class="px-tasbih">\
+  <div class="px-tasbih-presets" role="group" aria-label="اختيار الذكر"></div>\
+  <button type="button" class="px-bead" aria-label="سجّل تسبيحة"><span class="px-bead-count">٠</span><span class="px-bead-text">سبحان الله</span></button>\
+  <div class="px-tasbih-row"><label>الهدف: <select class="px-target"><option value="33">٣٣</option><option value="100" selected>١٠٠</option><option value="1000">١٠٠٠</option><option value="0">بلا هدف</option></select></label>\
+  <span class="px-cycles">الجولات: ٠</span><span class="px-total">المجموع: ٠</span></div>\
+  <div class="px-tasbih-row"><button type="button" class="platform-button px-reset">تصفير العدّاد</button><button type="button" class="platform-button px-reset-all">تصفير الكل</button></div>\
+ </div>';
+ host.append(taSec);
+ main.append(host);
+ /* nav additions */
+ const nav=document.getElementById('platform-navigation');
+ const extras=[['▦','الأجزاء','الفهرس والأحزاب والأرباع','px-juz'],['✦','الأذكار','حصن المسلم كاملًا','px-adhkar'],['◉','السبحة','عداد التسبيح','px-tasbih']];
+ for(const[ic,lb,sm,id]of extras){
+  const a=document.createElement('a');a.href='#'+id;
+  const i1=document.createElement('span');i1.className='platform-nav-icon';i1.setAttribute('aria-hidden','true');i1.textContent=ic;
+  const tx=document.createElement('span');tx.className='platform-nav-label';tx.textContent=lb;const small=document.createElement('small');small.textContent=sm;tx.append(small);
+  a.append(i1,tx);a.addEventListener('click',e=>{e.preventDefault();document.getElementById(id)?.scrollIntoView({behavior:motion(),block:'start'})});nav.append(a)}
+ /* bottom tab bar */
+ const tabs=document.createElement('nav');tabs.className='px-tabs';tabs.setAttribute('aria-label','أقسام المنصة');
+ tabs.innerHTML='<button type="button" data-t="mushaf"><span>المصحف</span></button><button type="button" data-t="px-juz"><span>الأجزاء</span></button><button type="button" data-t="px-adhkar"><span>الأذكار</span></button><button type="button" data-t="px-tasbih"><span>السبحة</span></button>';
+ document.body.append(tabs);
+ tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset.t;
+  if(t==='mushaf'){const home=[...document.querySelectorAll('#platform-navigation a')].find(x=>x.getAttribute('href')==='#/');home?.click();root.querySelector('.qr-enter')?.scrollIntoView({behavior:motion(),block:'start'})}
+  else document.getElementById(t)?.scrollIntoView({behavior:motion(),block:'start'})});
+ /* division chip in pager */
+ const chipTimer=setInterval(()=>{
+  const pager=document.querySelector('.reading-pager');if(!pager)return;
+  let chip=pager.querySelector('.reading-division');
+  if(!chip){chip=document.createElement('span');chip.className='reading-division';const pt=pager.querySelector('.reading-progress-text');pt?pt.after(chip):pager.append(chip)}
+  const s=currentSurah();const cap=[...root.querySelectorAll('.site-caption')].map(x=>x.textContent).find(t=>t.includes('الآيات'));
+  const m=(cap||'').match(/[٠-٩]+/g);
+  chip.textContent=(s&&m&&m.length)?divisionLabel(s,parseAr(m[0])):'';
+ },700);
+ /* tasbih */
+ const PRESETS=['سبحان الله','الحمد لله','الله أكبر','لا إله إلا الله','أستغفر الله','لا حول ولا قوة إلا بالله','سبحان الله وبحمده','اللهم صلِّ على محمد'];
+ let st;try{st=JSON.parse(localStorage.getItem('quran.tasbih.v1'))||{}}catch{st={}}
+ st=Object.assign({count:0,target:100,cycles:0,total:0,preset:0},st);
+ const bead=taSec.querySelector('.px-bead'),bc=taSec.querySelector('.px-bead-count'),bt=taSec.querySelector('.px-bead-text'),cy=taSec.querySelector('.px-cycles'),tt=taSec.querySelector('.px-total'),sel=taSec.querySelector('.px-target');
+ const presets=taSec.querySelector('.px-tasbih-presets');
+ PRESETS.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='px-preset';b.textContent=p;b.addEventListener('click',()=>{st.preset=i;drawT();saveT()});presets.append(b)});
+ function saveT(){try{localStorage.setItem('quran.tasbih.v1',JSON.stringify(st))}catch{}}
+ function drawT(){
+  bc.textContent=arNum(st.count);bt.textContent=PRESETS[st.preset];
+  cy.textContent='الجولات: '+arNum(st.cycles);tt.textContent='المجموع: '+arNum(st.total);
+  sel.value=String(st.target);
+  presets.querySelectorAll('.px-preset').forEach((b,i)=>b.classList.toggle('on',i===st.preset));
+  const pct=st.target>0?Math.min(1,st.count/st.target):0;
+  bead.style.setProperty('--p',pct);
+  bead.classList.toggle('full',st.target>0&&st.count>=st.target)}
+ function tick(){st.count++;st.total++;
+  if(st.target>0&&st.count>=st.target){st.cycles++;st.count=0;if(navigator.vibrate)navigator.vibrate([40,60,40]);toast('ما شاء الله، أتممت '+arNum(st.target)+' — الجولة '+arNum(st.cycles))}
+  else if(navigator.vibrate)navigator.vibrate(12);
+  drawT();saveT()}
+ bead.addEventListener('click',tick);
+ document.addEventListener('keydown',e=>{if(e.key===' '&&taSec.contains(document.activeElement)&&document.activeElement===bead){e.preventDefault();tick()}});
+ sel.addEventListener('change',()=>{st.target=+sel.value;drawT();saveT()});
+ taSec.querySelector('.px-reset').addEventListener('click',()=>{st.count=0;drawT();saveT()});
+ taSec.querySelector('.px-reset-all').addEventListener('click',()=>{st.count=0;st.cycles=0;st.total=0;drawT();saveT()});
+ drawT();
+ /* tafsir sheet */
+ const sheet=document.createElement('div');sheet.className='px-tafsir';sheet.hidden=true;sheet.setAttribute('role','dialog');sheet.setAttribute('aria-label','تفسير الآية من مصادرها');
+ document.body.append(sheet);
+ function openTafsir(){
+  const v=root.querySelector('.platform-verse-active');if(!v)return;
+  const s=currentSurah();const a=parseAr(v.querySelector('.qr-ayah-number')?.textContent);
+  if(!s||!a)return;
+  const muyassar='https://quran.com/'+s+':'+a+'/tafsirs/ar-tafsir-muyassar';
+  const uth='https://tafsir.app/ibn-uthaymeen/'+s+'/'+a;
+  sheet.innerHTML='<div class="px-tafsir-card">\
+   <div class="px-tafsir-head"><h3>تفسير الآية — سورة '+SURAHS[s-1]+' · آية '+arNum(a)+'</h3><button type="button" class="platform-button px-tafsir-close" aria-label="إغلاق">×</button></div>\
+   <p class="px-tafsir-note">يفتح كل مصدر صفحة الآية على موقعه الرسمي في تبويب جديد.</p>\
+   <a class="px-tafsir-src" href="'+muyassar+'" target="_blank" rel="noopener"><b>التفسير الميسّر</b><small>مجمع الملك فهد لطباعة المصحف الشريف — يشمل كل آيات القرآن — quran.com</small></a>'+
+   (UTH.has(s)
+    ?'<a class="px-tafsir-src" href="'+uth+'" target="_blank" rel="noopener"><b>تفسير ابن عثيمين</b><small>تفسير القرآن الكريم — tafsir.app</small></a>'
+    :'<div class="px-tafsir-src off"><b>تفسير ابن عثيمين</b><small>تفسيره المرتّب المتاح لا يشمل هذه السورة</small></div>')+
+   '<div class="px-tafsir-src off"><b>الشيخ ابن باز</b><small>لم نجد تفسيرًا مرتبًا آية بآية بقلمه؛ له فتاوى وفوائد على آيات مختارة في <a href="https://binbaz.org.sa/" target="_blank" rel="noopener">موقعه الرسمي binbaz.org.sa</a></small></div>\
+  </div>';
+  sheet.hidden=false;
+  sheet.querySelector('.px-tafsir-close').addEventListener('click',()=>sheet.hidden=true);
+ }
+ document.addEventListener('click',e=>{if(e.target.closest('.platform-bar-tafsir'))openTafsir();if(e.target===sheet)sheet.hidden=true});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')sheet.hidden=true});
+}
+const boot=()=>{build();if(built)obs.disconnect()};
+const obs=new MutationObserver(boot);obs.observe(root,{childList:true,subtree:true});boot();
 })();
