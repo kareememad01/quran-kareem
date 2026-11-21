@@ -66,7 +66,7 @@ function buildPager(){
  if(pager)return;
  pager=document.createElement('div');pager.className='reading-pager';pager.hidden=true;
  pager.setAttribute('role','navigation');pager.setAttribute('aria-label','تنقّل القراءة');
- pager.innerHTML='<button type="button" class="platform-button rp-prev-surah">‹ السورة السابقة</button><button type="button" class="platform-button rp-prev-page">‹ الصفحة السابقة</button><span class="reading-progress" aria-hidden="true"><i></i></span><span class="reading-progress-text"></span><button type="button" class="platform-button rp-next-page">الصفحة التالية ›</button><button type="button" class="platform-button rp-next-surah">السورة التالية ›</button>';
+ pager.innerHTML='<button type="button" class="platform-button rp-prev-surah"><span class="rp-full">‹ السورة السابقة</span><span class="rp-short">‹ سورة</span></button><button type="button" class="platform-button rp-prev-page"><span class="rp-full">‹ الصفحة السابقة</span><span class="rp-short">‹ صفحة</span></button><span class="reading-progress" aria-hidden="true"><i></i></span><span class="reading-progress-text"></span><button type="button" class="platform-button rp-next-page"><span class="rp-full">الصفحة التالية ›</span><span class="rp-short">صفحة ›</span></button><button type="button" class="platform-button rp-next-surah"><span class="rp-full">السورة التالية ›</span><span class="rp-short">سورة ›</span></button>';
  document.body.append(pager);
  prevSurah=pager.querySelector('.rp-prev-surah');prevPage=pager.querySelector('.rp-prev-page');
  nextPage=pager.querySelector('.rp-next-page');nextSurah=pager.querySelector('.rp-next-surah');
