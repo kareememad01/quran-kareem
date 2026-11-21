@@ -210,7 +210,8 @@ adSec.querySelector('.px-adhkar-search').addEventListener('input',e=>drawAdhkar(
   if(!chip){chip=document.createElement('span');chip.className='reading-division';const pt=pager.querySelector('.reading-progress-text');pt?pt.after(chip):pager.append(chip)}
   const s=currentSurah();if(!s){chip.textContent='';return}
   const vs=[...root.querySelectorAll('.qr-verse')];
-  const top=vs.find(x=>x.getBoundingClientRect().bottom>140)||vs[vs.length-1];
+  const mid=innerHeight/2;
+  const top=vs.find(x=>{const r=x.getBoundingClientRect();return r.top<=mid&&r.bottom>=mid})||vs.find(x=>x.getBoundingClientRect().bottom>140)||vs[vs.length-1];
   const a=top?parseAr(top.querySelector('.qr-ayah-number')?.textContent):null;
   chip.textContent=a?divisionLabel(s,a):'';
  }
