@@ -1,16 +1,18 @@
-/* Athar Tayeb v23/v25 additions: reciters with continuous play, Ruqyah section, version badge and safe update button.
+/* Athar Tayeb v26: continuous full-surah playback for every reciter, surah download, Ruqyah section, version badge and safe update button.
    Adds behaviour only. The Quran bundle and existing data are not modified. Personal data in localStorage is never touched here. */
 (()=>{
 'use strict';
-const VERSION='25';
+const VERSION='26';
 const AC=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const RECS=[
- {id:'basit',ar:'عبد الباسط عبد الصمد (مرتل)',en:'Abdul Basit Abdus-Samad (Murattal)',folder:'Abdul_Basit_Murattal_192kbps'},
- {id:'maher',ar:'ماهر المعيقلي',en:'Maher Al-Muaiqly',folder:'MaherAlMuaiqly128kbps'},
- {id:'husary',ar:'محمود خليل الحصري',en:'Mahmoud Khalil Al-Husary',folder:'Husary_128kbps'},
- {id:'dosari',ar:'ياسر الدوسري',en:'Yasser Ad-Dossari',folder:'Yasser_Ad-Dussary_128kbps'},
- {id:'jalil',ar:'خالد الجليل',en:'Khalid Al-Jalil',surahBase:'https://cdn.mp3quran.net/audio/khalid-jalil/r1/',timing:'https://www.mp3quran.net/api/v3/ayat_timing?read=20&surah='},
- {id:'alafasy',ar:'مشاري العفاسي',en:'Mishary Alafasy',folder:'Alafasy_128kbps'}
+ {id:'basit',ar:'عبد الباسط عبد الصمد (مرتل)',en:'Abdul Basit Abdus-Samad (Murattal)',read:51,base:'https://cdn.mp3quran.net/audio/abdulbasit-abdulsamad/r3/'},
+ {id:'maher',ar:'ماهر المعيقلي',en:'Maher Al-Muaiqly',read:102,base:'https://cdn.mp3quran.net/audio/maher-muaiqly/r1/'},
+ {id:'husary',ar:'محمود خليل الحصري',en:'Mahmoud Khalil Al-Husary',read:118,base:'https://cdn.mp3quran.net/audio/mahmoud-husary/r1/'},
+ {id:'dosari',ar:'ياسر الدوسري',en:'Yasser Ad-Dossari',read:92,base:'https://cdn.mp3quran.net/audio/yasser-dosari/r1/'},
+ {id:'jalil',ar:'خالد الجليل',en:'Khalid Al-Jalil',read:20,base:'https://cdn.mp3quran.net/audio/khalid-jalil/r1/'},
+ {id:'alafasy',ar:'مشاري العفاسي',en:'Mishary Alafasy',read:123,base:'https://cdn.mp3quran.net/audio/mishary-alafasy/r1/'},
+ {id:'salimi',ar:'منصور السالمي',en:'Mansour Al-Salimi',read:245,base:'https://cdn.mp3quran.net/audio/mansour-salimi/r1/'},
+ {id:'minshawi',ar:'محمد صديق المنشاوي (مرتل)',en:'Muhammad Siddiq Al-Minshawi (Murattal)',read:112,base:'https://cdn.mp3quran.net/audio/muhammad-minshawi/r1/'}
 ];
 const KEY='athar-reciter-v22';
 const TXT={"2:255": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ", "2:285": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ", "2:286": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ", "1:1": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "1:2": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ", "1:3": "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "1:4": "مَٰلِكِ يَوْمِ ٱلدِّينِ", "1:5": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", "1:6": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ", "1:7": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ", "112:1": "قُلْ هُوَ ٱللَّهُ أَحَدٌ", "112:2": "ٱللَّهُ ٱلصَّمَدُ", "112:3": "لَمْ يَلِدْ وَلَمْ يُولَدْ", "112:4": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ", "113:1": "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ", "113:2": "مِن شَرِّ مَا خَلَقَ", "113:3": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ", "113:4": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ", "113:5": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", "114:1": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ", "114:2": "مَلِكِ ٱلنَّاسِ", "114:3": "إِلَٰهِ ٱلنَّاسِ", "114:4": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ", "114:5": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ", "114:6": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ"};
@@ -20,38 +22,58 @@ const isEn=()=>document.documentElement.lang==='en';
 const L=(a,e)=>isEn()?e:a;
 const rec=()=>RECS.find(r=>r.id===localStorage.getItem(KEY))||RECS[5];
 let audio=new Audio();audio.preload='auto';window.atPlayer={audio,state:()=>st};
-let st={list:null,i:0,active:false,timing:null,rid:null};
+let st={list:null,i:0,active:false,T:null,fromRuq:false};
+let gen=0;
 const cache={};
-function ayahUrl(r,s,a){return 'https://everyayah.com/data/'+r.folder+'/'+pad(s,3)+pad(a,3)+'.mp3'}
-async function timings(r,s){const k=r.id+s;if(cache[k])return cache[k];try{const j=await (await fetch(r.timing+s)).json();cache[k]=j.map(x=>({a:x.ayah,s:x.start_time/1000,e:x.end_time/1000}))}catch(e){cache[k]=null}return cache[k]}
+const surahUrl=(r,s)=>r.base+pad(s,3)+'.mp3';
+/* Normalize the timing list to {ayah:{s,e}} in seconds. Some recordings carry an intro segment numbered 0;
+   some (e.g. Al-Husary's Al-Fatiha) count the basmalah as 0 and shift the rest, detected by count/max. */
+function normTiming(j,n){if(!Array.isArray(j)||!j.length)return null;
+ const by={};for(const x of j){const a=Number(x.ayah);if(a>=1&&a<=n&&!by[a])by[a]={s:x.start_time/1000,e:x.end_time/1000}};
+ let ok=true;for(let a=1;a<=n;a++)if(!by[a]){ok=false;break}
+ if(ok)return by;
+ const nums=j.map(x=>Number(x.ayah));
+ if(j.length===n&&Math.min.apply(null,nums)===0&&Math.max.apply(null,nums)===n-1){const out={};for(const x of j)out[Number(x.ayah)+1]={s:x.start_time/1000,e:x.end_time/1000};return out}
+ return null}
+async function timings(r,s){const k=r.id+':'+s;if(k in cache)return cache[k];let out=null;
+ try{const j=await (await fetch('https://www.mp3quran.net/api/v3/ayat_timing?read='+r.read+'&surah='+s)).json();out=normTiming(j,AC[s-1])}catch(e){}
+ cache[k]=out;return out}
 function setStatus(t){document.querySelectorAll('.at-status').forEach(e=>e.textContent=t)}
 function mark(){document.querySelectorAll('.at-playing').forEach(e=>e.classList.remove('at-playing'));document.querySelectorAll('.at-ruq-now').forEach(e=>e.classList.remove('at-ruq-now'));if(!st.active)return;const it=st.list[st.i];if(!it)return;
  const sel=document.querySelector('.qr-surah.qr-selected .qr-number');const cur=sel?dig(sel.textContent):0;
  if(cur===it.s){const v=document.querySelectorAll('.qr-verses .qr-verse')[it.a-1];if(v){v.classList.add('at-playing');if(!st.fromRuq)v.scrollIntoView({block:'center',behavior:document.documentElement.dataset.motion==='off'?'instant':'smooth'})}}
  const n=document.querySelector('[data-ruq="'+it.s+':'+it.a+'"]');if(n)n.classList.add('at-ruq-now')}
-function stop(msg){document.querySelectorAll('.at-full').forEach(x=>x.remove());st.active=false;audio.pause();audio.onended=audio.ontimeupdate=null;mark();setStatus(msg||'')}
-async function playIndex(i){
- if(i>=st.list.length){stop(L('انتهت التلاوة','Recitation finished'));return}
- st.i=i;const it=st.list[i],r=rec();audio.onended=audio.ontimeupdate=null;
- mark();setStatus(L('تلاوة ','Reciting ')+L(r.ar,r.en)+' · '+it.s+':'+it.a);
- if(r.folder){audio.src=ayahUrl(r,it.s,it.a);audio.onended=()=>{if(st.active)playIndex(i+1)};
-  const nx=st.list[i+1];if(nx){const p=new Audio();p.preload='auto';p.src=ayahUrl(r,nx.s,nx.a)}
-  try{await audio.play()}catch(e){stop(L('تعذر تشغيل الصوت. تأكد من الإنترنت ثم اضغط استماع مرة أخرى.','Could not play audio. Check your connection and tap listen again.'))}
+function stop(msg){gen++;document.querySelectorAll('.at-full').forEach(x=>x.remove());st.active=false;audio.pause();audio.onended=audio.ontimeupdate=null;mark();setStatus(msg||'')}
+/* Split an ordered ayah list into runs of consecutive ayahs inside one surah; each run plays from the same continuous file. */
+function segmentsOf(list,i0){const seg=[];for(let k=i0;k<list.length;k++){const it=list[k];const last=seg[seg.length-1];
+ if(last&&last.s===it.s&&it.a===last.to+1)last.to=it.a;else seg.push({s:it.s,from:it.a,to:it.a,idx0:k})}return seg}
+async function playSeg(k,g){
+ if(g!==gen||!st.active)return;
+ if(k>=st.segs.length){stop(L('انتهت التلاوة','Recitation finished'));return}
+ st.segK=k;const seg=st.segs[k],r=rec();st.i=seg.idx0;mark();
+ audio.onended=audio.ontimeupdate=null;
+ setStatus(L('تلاوة ','Reciting ')+L(r.ar,r.en)+' · '+st.list[seg.idx0].s+':'+st.list[seg.idx0].a);
+ const T=await timings(r,seg.s);if(g!==gen||!st.active)return;
+ st.T=T;
+ const url=surahUrl(r,seg.s);
+ const seek=(T&&seg.from>1)?T[seg.from].s:0;
+ const endAt=T?T[seg.to].e:null;
+ if(audio.dataset.cur!==url){audio.src=url;audio.dataset.cur=url}
+ const begin=()=>{if(g!==gen||!st.active)return;
+  try{if(seek>0&&isFinite(audio.duration)&&audio.duration>seek)audio.currentTime=seek}catch(e){}
+  audio.play().catch(()=>{if(g===gen&&st.active)stop(L('تعذر تشغيل الصوت. تأكد من الإنترنت ثم اضغط التشغيل مرة أخرى.','Could not play audio. Check your connection and tap play again.'))})};
+ if(audio.readyState>=1)begin();else audio.addEventListener('loadedmetadata',begin,{once:true});
+ if(T){
+  audio.ontimeupdate=()=>{if(g!==gen||!st.active)return;const t=audio.currentTime;
+   if(endAt!=null&&t>=endAt-0.2){playSeg(k+1,g);return}
+   for(let a=seg.from;a<=seg.to;a++){const w=T[a];if(w&&t>=w.s&&t<w.e){const idx=seg.idx0+(a-seg.from);if(idx!==st.i){st.i=idx;mark();setStatus(L('تلاوة ','Reciting ')+L(r.ar,r.en)+' · '+seg.s+':'+a)}break}}};
  }else{
-  /* Surah-length recording with official ayah timings. Continues through the rest of the same surah file. */
-  const T=await timings(r,it.s);const seg=T&&T.find(x=>x.a===it.a);const url=r.surahBase+pad(it.s,3)+'.mp3';
-  if(!seg){stop(L('تعذر تحديد موضع هذه الآية في تسجيل ','Could not locate this ayah in the recording of ')+L(r.ar,r.en)+L('. يمكنك تشغيل السورة كاملة من بدايتها.','. You can play the whole surah from its start.'));offerFull(r,it.s,url);return}
-  const sameFile=audio.src===url&&!audio.ended;
-  audio.src=url;
-  const go=()=>{if(seg)audio.currentTime=seg.s;audio.play().catch(()=>stop(L('تعذر تشغيل الصوت. تأكد من الإنترنت.','Could not play audio. Check your connection.')))};
-  audio.addEventListener('loadedmetadata',go,{once:true});
-  audio.ontimeupdate=()=>{if(!T||!st.active)return;const t=audio.currentTime;const idx=st.list.findIndex((x,k)=>k>=st.i&&x.s===it.s&&T.some(y=>y.a===x.a&&t>=y.s&&t<y.e));if(idx>=0&&idx!==st.i){st.i=idx;mark();setStatus(L('تلاوة ','Reciting ')+L(r.ar,r.en)+' · '+st.list[idx].s+':'+st.list[idx].a)}};
-  audio.onended=()=>{if(st.active)stop(L('انتهت التلاوة','Recitation finished'))};
- }
+  setStatus(L('تلاوة ','Reciting ')+L(r.ar,r.en)+L(' · السورة كاملة من بدايتها — مواضع الآيات غير متاحة لهذا القارئ.',' · the whole surah from its start — ayah positions unavailable for this reciter.'))}
+ audio.onended=()=>{if(g===gen&&st.active)playSeg(k+1,g)};
 }
-function offerFull(r,s,url){document.querySelectorAll('.at-full').forEach(x=>x.remove());document.querySelectorAll('.at-status').forEach(box=>{const b=document.createElement('button');b.type='button';b.className='file-button at-full';b.textContent=L('تشغيل السورة كاملة','Play the whole surah');b.onclick=()=>{b.remove();stop();st={list:[{s,a:1}],i:0,active:true,fromRuq:false};audio.onended=()=>stop(L('انتهت التلاوة','Recitation finished'));audio.src=url;audio.play().then(()=>setStatus(L('تلاوة السورة كاملة · ','Reciting the whole surah · ')+L(r.ar,r.en))).catch(()=>stop(L('تعذر تشغيل الصوت.','Could not play audio.')))};box.after(b)})}
-function startFrom(list,i,fromRuq){stop();st={list,i,active:true,fromRuq:!!fromRuq};playIndex(i)}
+function startFrom(list,i,fromRuq){stop();st={list,i,active:true,fromRuq:!!fromRuq,T:null,segs:segmentsOf(list,i),segK:0};playSeg(0,gen)}
 function surahList(s,from){const out=[];for(let a=from;a<=AC[s-1];a++)out.push({s,a});return out}
+function selectedSurah(){const sel=document.querySelector('.qr-surah.qr-selected .qr-number');return sel?dig(sel.textContent):0}
 
 /* Reader: intercept the existing listen buttons so they use the chosen reciter and continue to the end of the surah. */
 document.addEventListener('click',e=>{
@@ -65,13 +87,43 @@ document.addEventListener('click',e=>{
 function recSelect(){const sel=document.createElement('select');sel.className='at-reciter';sel.setAttribute('aria-label','القارئ');
  for(const r of RECS){const o=document.createElement('option');o.value=r.id;o.textContent=L(r.ar,r.en);sel.append(o)}
  sel.value=rec().id;sel.addEventListener('change',()=>{localStorage.setItem(KEY,sel.value);document.querySelectorAll('.at-reciter').forEach(x=>x.value=sel.value);if(st.active){const l=st.list,i=st.i,f=st.fromRuq;startFrom(l,i,f)}});return sel}
+/* Download the whole surah as one MP3 with the chosen reciter. mp3quran's CDN allows cross-origin fetches, so the browser saves a real file. */
+let dlBusy=false;
+async function downloadSurah(btn){
+ if(dlBusy)return;
+ const s=selectedSurah();if(!s){setStatus(L('اختر السورة من الفهرس أولًا.','Choose a surah from the index first.'));return}
+ const r=rec(),url=surahUrl(r,s);
+ const h=document.querySelector('.qr-reader-head h2');
+ const base=((h?h.textContent.trim():'')||L('سورة','Surah')+' '+s)+' - '+L(r.ar,r.en);
+ const name=base.replace(/[\\/:*?"<>|]/g,'')+'.mp3';
+ dlBusy=true;const old=btn.textContent;btn.disabled=true;
+ try{
+  const res=await fetch(url);if(!res.ok)throw new Error('http');
+  const total=Number(res.headers.get('content-length'))||0;let blob;
+  if(res.body&&res.body.getReader){const rd=res.body.getReader(),parts=[];let got=0;
+   for(;;){const x=await rd.read();if(x.done)break;parts.push(x.value);got+=x.value.length;
+    btn.textContent=L('جارٍ التحميل… ','Downloading… ')+Math.floor(got/1048576)+(total?'/'+Math.ceil(total/1048576):'')+L(' م.ب',' MB')}
+   blob=new Blob(parts,{type:'audio/mpeg'});
+  }else blob=await res.blob();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+  setStatus(L('تم تنزيل ','Downloaded ')+name);
+ }catch(e){
+  setStatus(L('تعذر التنزيل المباشر؛ فُتح الملف في تبويب جديد، احفظه من قائمة المتصفح.','Direct download failed; the file opened in a new tab, save it from the browser menu.'));
+  window.open(url,'_blank','noopener');
+ }finally{dlBusy=false;btn.disabled=false;btn.textContent=old}}
+
 function enhanceAudio(){const box=document.querySelector('.qr-audio');if(!box||box.querySelector('.at-reciter'))return;
  const strong=box.querySelector('strong');if(strong)strong.textContent=L('اختر القارئ','Choose reciter');
- const p=box.querySelector('.site-caption');if(p)p.textContent=L('اضغط «استماع» بجوار أي آية فتبدأ منها وتكمل بقية السورة تلقائيًا. يحتاج الصوت إلى الإنترنت.','Tap "listen" beside any ayah. It plays from there and continues to the end of the surah. Audio needs internet.');
+ const p=box.querySelector('.site-caption');if(p)p.textContent=L('اضغط «تشغيل السورة كاملة» واستمع من غير توقف بين الآيات، أو «استماع» بجوار أي آية لتبدأ منها وتكمل السورة. التشغيل يحتاج إنترنت، وزر التحميل يحفظ السورة على جهازك.','Tap "Play the whole surah" to listen without pauses between verses, or "listen" beside any ayah to start there and continue to the end. Playback needs internet; the download button saves the surah to your device.');
  const chk=box.querySelector('.qr-check');if(chk)chk.style.display='none';
  const row=document.createElement('div');row.className='at-audio-row';row.append(recSelect());
+ const play=document.createElement('button');play.type='button';play.className='file-button';play.textContent=L('تشغيل السورة كاملة','Play the whole surah');
+ play.onclick=()=>{const s=selectedSurah();if(s)startFrom(surahList(s,1),0,false)};row.append(play);
+ const dlb=document.createElement('button');dlb.type='button';dlb.className='file-button';dlb.textContent=L('تحميل السورة','Download surah');
+ dlb.onclick=()=>downloadSurah(dlb);row.append(dlb);
  const stp=document.createElement('button');stp.type='button';stp.className='file-button';stp.textContent=L('إيقاف','Stop');stp.onclick=()=>stop(L('تم الإيقاف','Stopped'));row.append(stp);
- const status=document.createElement('p');status.className='at-status site-caption';status.setAttribute('aria-live','polite');const cr=document.createElement('p');cr.className='site-caption';cr.append(document.createTextNode(L('الصوت يُبث من ','Audio streams from ')));for(const [n,u] of [['everyayah.com','https://everyayah.com/'],['mp3quran.net','https://www.mp3quran.net/']]){const a=document.createElement('a');a.textContent=n;a.href=u;a.target='_blank';a.rel='noopener noreferrer';cr.append(a,document.createTextNode(' '))}box.append(row,status,cr)}
+ const status=document.createElement('p');status.className='at-status site-caption';status.setAttribute('aria-live','polite');const cr=document.createElement('p');cr.className='site-caption';cr.append(document.createTextNode(L('الصوت يُبث ويُنزَّل من ','Audio streams and downloads from ')));const cra=document.createElement('a');cra.textContent='mp3quran.net';cra.href='https://www.mp3quran.net/';cra.target='_blank';cra.rel='noopener noreferrer';cr.append(cra);box.append(row,status,cr)}
 
 /* Ruqyah section */
 const RUQ=[
@@ -108,7 +160,7 @@ function ruqSection(){const sec=document.createElement('section');sec.id='px-ruq
   const pb=h('button','file-button',L('استماع','Listen'));pb.type='button';pb.onclick=()=>startFrom(list,0,true);card.append(pb);sec.append(card)}
  const dh=h('h3','platform-section-heading',L('أدعية ثابتة من السنة','Reported supplications'));sec.append(dh);
  for(const d of DUA){const c=h('article','at-ruq-card');c.append(h('p','at-ruq-text',d.a));if(d.cnt)c.append(h('p','site-caption',L('العدد الوارد: ','Reported count: ')+d.cnt));const sp=h('p','site-caption',d.src+' · ');const al=h('a',null,'sunnah.com');al.href=d.url;al.target='_blank';al.rel='noopener noreferrer';sp.append(al);c.append(sp);sec.append(c)}
- const cr=h('p','site-caption',L('الصوت يُبث مباشرة ولا يُحمَّل ولا يُخزَّن: تسجيلات الآيات من ','Audio is streamed live and never downloaded or stored: ayah recordings from '));for(const [n,u] of [['everyayah.com','https://everyayah.com/'],['mp3quran.net','https://www.mp3quran.net/']]){const a=h('a',null,n);a.href=u;a.target='_blank';a.rel='noopener noreferrer';cr.append(a,document.createTextNode(' '))}cr.append(document.createTextNode(L('وحقوقها لأصحابها.','; rights belong to their owners.')));sec.append(cr);
+ const cr=h('p','site-caption',L('الصوت يُبث مباشرة من ','Audio streams live from '));const ra=h('a',null,'mp3quran.net');ra.href='https://www.mp3quran.net/';ra.target='_blank';ra.rel='noopener noreferrer';cr.append(ra,document.createTextNode(L(' وحقوقها لأصحابها.','; rights belong to their owners.')));sec.append(cr);
  sec.append(h('p','site-caption',L('نصوص الأدعية منقولة من متون الأحاديث المذكورة. القرآن مأخوذ بالرسم العثماني. التلاوة الصوتية من مصادر خارجية وتحتاج إلى الإنترنت.','Supplication wording is copied from the hadith texts cited. Quran text is Uthmani script. Recitation audio comes from external sources and needs internet.')));
  return sec}
 function routeRuq(){const nav=document.getElementById('platform-navigation');const main=document.querySelector('main.site-card');if(!nav||!main||!document.getElementById('site-contact'))return;
