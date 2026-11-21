@@ -43,3 +43,58 @@ function setup(){const panel=root.querySelector('.qr-enter'),verses=panel?.query
 const title=panel.querySelector('.qr-reader-head h2')?.textContent;if(lastTitle!==title){close();lastTitle=title}if(selected&&!selected.isConnected)close();panel.classList.toggle('platform-mushaf',mode==='continuous');let tools=panel.querySelector('.platform-reader-tools');if(!tools){tools=document.createElement('div');tools.className='platform-reader-tools';tools.innerHTML='<div class="platform-reader-switch" role="group" aria-label="طريقة عرض الآيات"><button type="button" class="platform-button platform-continuous">عرض المصحف</button><button type="button" class="platform-button platform-detailed">آية بآية</button></div><button type="button" class="platform-button platform-audio-settings" aria-pressed="false">إعدادات التلاوة</button>';panel.querySelector('.qr-reader-head').after(tools);const note=document.createElement('p');note.className='platform-reader-note';note.textContent='عرض متصل مستوحى من هدوء المصحف. اضغط آية للاستماع أو الحفظ أو النسخ. التقسيم هنا ٢٠ آية للعرض، وليس مطابقًا لصفحات مصحف المدينة.';tools.after(note);for(const[k,name]of[['continuous','continuous'],['detailed','detailed']])tools.querySelector('.platform-'+name).addEventListener('click',()=>{mode=k;try{localStorage.setItem('quran.ui.reading',mode)}catch{}close();setup()});tools.querySelector('.platform-audio-settings').addEventListener('click',e=>{panel.classList.toggle('platform-audio-open');e.currentTarget.setAttribute('aria-pressed',String(panel.classList.contains('platform-audio-open')))})}
 tools.querySelector('.platform-continuous').setAttribute('aria-pressed',String(mode==='continuous'));tools.querySelector('.platform-detailed').setAttribute('aria-pressed',String(mode!=='continuous'));verses.querySelectorAll('.qr-verse').forEach(v=>{if(bound.has(v))return;bound.add(v);v.tabIndex=0;v.setAttribute('aria-label','اختيار الآية '+v.querySelector('.qr-ayah-number').textContent);v.addEventListener('click',e=>{if(mode==='continuous'&&!e.target.closest('button'))select(v)});v.addEventListener('keydown',e=>{if(mode==='continuous'&&(e.key==='Enter'||e.key===' ')){e.preventDefault();select(v)}})})}
 new MutationObserver(setup).observe(root,{subtree:true,childList:true});setup();})();
+
+/* Reading pager and font upgrade. Quran text untouched. */
+(()=>{
+'use strict';
+const root=document.getElementById('root');
+if(!root)return;
+const SURAHS=["الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس", "هود", "يوسف", "الرعد", "ابراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه", "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم", "لقمان", "السجدة", "الأحزاب", "سبإ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر", "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق", "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة", "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج", "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الانسان", "المرسلات", "النبإ", "النازعات", "عبس", "التكوير", "الإنفطار", "المطففين", "الإنشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد", "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات", "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر", "المسد", "الإخلاص", "الفلق", "الناس"];
+const AR='٠١٢٣٤٥٦٧٨٩';
+const parseAr=s=>{const m=String(s||'').replace(/[٠-٩]/g,d=>AR.indexOf(d)).match(/\d+/);return m?+m[0]:null};
+const arNum=n=>Number(n).toLocaleString('ar-EG',{useGrouping:false});
+/* Google Fonts: Amiri Quran for the Quran text, Amiri for headings (fast woff2, OFL). */
+if(!document.getElementById('tafsir-fonts')){
+ const pc=document.createElement('link');pc.rel='preconnect';pc.href='https://fonts.gstatic.com';pc.crossOrigin='';
+ const lk=document.createElement('link');lk.id='tafsir-fonts';lk.rel='stylesheet';
+ lk.href='https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&display=swap';
+ document.head.append(pc,lk);
+}
+/* ---- Persistent pager ---- */
+let pager,prevPage,nextPage,prevSurah,nextSurah,progressFill,progressText;
+function buildPager(){
+ if(pager)return;
+ pager=document.createElement('div');pager.className='reading-pager';pager.hidden=true;
+ pager.setAttribute('role','navigation');pager.setAttribute('aria-label','تنقّل القراءة');
+ pager.innerHTML='<button type="button" class="platform-button rp-prev-surah">‹ السورة السابقة</button><button type="button" class="platform-button rp-prev-page">‹ الصفحة السابقة</button><span class="reading-progress" aria-hidden="true"><i></i></span><span class="reading-progress-text"></span><button type="button" class="platform-button rp-next-page">الصفحة التالية ›</button><button type="button" class="platform-button rp-next-surah">السورة التالية ›</button>';
+ document.body.append(pager);
+ prevSurah=pager.querySelector('.rp-prev-surah');prevPage=pager.querySelector('.rp-prev-page');
+ nextPage=pager.querySelector('.rp-next-page');nextSurah=pager.querySelector('.rp-next-surah');
+ progressFill=pager.querySelector('.reading-progress i');progressText=pager.querySelector('.reading-progress-text');
+ const go=label=>{const b=[...root.querySelectorAll('.qr-enter .qr-actions button')].find(x=>x.textContent.trim()===label&&!x.disabled);if(b){b.click();setTimeout(()=>root.querySelector('.qr-verses')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.dataset.motion==='off'?'instant':'smooth',block:'start'}),60)}};
+ prevSurah.addEventListener('click',()=>go('السورة السابقة'));prevPage.addEventListener('click',()=>go('الصفحة السابقة'));
+ nextPage.addEventListener('click',()=>go('الصفحة التالية'));nextSurah.addEventListener('click',()=>go('السورة التالية'));
+ document.addEventListener('keydown',e=>{
+  if(pager.hidden||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
+  if(e.key==='ArrowLeft'){e.preventDefault();go('الصفحة التالية')}
+  if(e.key==='ArrowRight'){e.preventDefault();go('الصفحة السابقة')}
+ });
+}
+function syncPager(){
+ buildPager();
+ const panel=root.querySelector('.qr-enter');
+ const mushaf=panel?.classList.contains('platform-mushaf');
+ if(!mushaf){pager.hidden=true;return}
+ pager.hidden=false;
+ const find=label=>[...panel.querySelectorAll('.qr-actions button')].find(x=>x.textContent.trim()===label);
+ const cap=[...panel.querySelectorAll('.site-caption')].map(x=>x.textContent).find(t=>t.includes('الآيات'))||'';
+ const nums=(cap.match(/[٠-٩]+/g)||[]).map(parseAr);
+ if(nums.length>=3){const pct=Math.min(100,Math.round(nums[1]/nums[2]*100));progressFill.style.width=pct+'%';progressText.textContent='الآيات '+arNum(nums[0])+'–'+arNum(nums[1])+' من '+arNum(nums[2])}
+ prevPage.disabled=!find('الصفحة السابقة')||find('الصفحة السابقة').disabled;
+ nextPage.disabled=!find('الصفحة التالية')||find('الصفحة التالية').disabled;
+ prevSurah.disabled=!find('السورة السابقة')||find('السورة السابقة').disabled;
+ nextSurah.disabled=!find('السورة التالية')||find('السورة التالية').disabled;
+}
+new MutationObserver(syncPager).observe(root,{subtree:true,childList:true});
+syncPager();
+})();
