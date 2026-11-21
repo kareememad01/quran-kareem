@@ -1,6 +1,6 @@
 /* Offline Quran reader. No audio, location responses or third-party pages are cached. */
 'use strict';
-const CACHE='quran-kareem-offline-v14';
+const CACHE='quran-kareem-offline-v15';
 const FILES=['index.html','content-1.js','content-2.js','content-3.js','content-divisions.js','design.css','design.js'];
 const base=new URL('./',self.location.href);
 const core=new Set(FILES.map(p=>new URL(p,base).pathname));
@@ -12,7 +12,7 @@ self.addEventListener('activate',event=>{
   const old=(await caches.keys()).filter(k=>k.startsWith('quran-kareem-offline-')&&k!==CACHE);
   await Promise.all(old.map(k=>caches.delete(k)));
   await self.clients.claim();
-  if(old.length){const windows=await self.clients.matchAll({type:'window'});await Promise.all(windows.filter(w=>w.url.startsWith(base.href)).map(w=>w.navigate(w.url).catch(()=>null)))}
+  if(old.length){const windows=await self.clients.matchAll({type:'window'});windows.filter(w=>w.url.startsWith(base.href)).forEach(w=>{w.navigate(w.url).catch(()=>null)})}
  })());
 });
 self.addEventListener('fetch',event=>{
