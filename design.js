@@ -134,7 +134,7 @@ async function gotoVerse(s,a){
  const verseEl=[...root.querySelectorAll('.qr-verse')].find(x=>parseAr(x.querySelector('.qr-ayah-number')?.textContent)===a);
  if(verseEl){verseEl.scrollIntoView({behavior:motion(),block:'center'});verseEl.classList.add('px-target-verse');setTimeout(()=>verseEl.classList.remove('px-target-verse'),2600)}
  else root.querySelector('.qr-verses')?.scrollIntoView({behavior:motion(),block:'start'});
- chipUpdate();
+ /* The scroll listener refreshes the division badge after the jump. */
  toast('سورة '+SURAHS[s-1]+' · آية '+arNum(a));
 }
 /* ---- sections ---- */
