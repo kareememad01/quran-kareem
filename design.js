@@ -318,3 +318,21 @@ function init(){
 }
 const obs=new MutationObserver(()=>{init();if(done)obs.disconnect()});obs.observe(document.body,{childList:true,subtree:true});init();
 })();
+
+/* v11: install the complete text reader for offline visits. */
+(()=>{
+'use strict';
+let initialized=false;
+function init(){
+ const strip=document.querySelector('.memorial-strip');if(!strip||initialized)return;initialized=true;
+ const state=document.createElement('small');state.className='offline-state';state.setAttribute('role','status');state.style.cssText='display:block;font-size:.76rem;line-height:1.8;margin-top:4px';strip.querySelector('p').append(state);
+ const help=document.querySelector('.memorial-help-list');
+ if(help){const item=document.createElement('section');item.innerHTML='<h3>القراءة دون إنترنت</h3><p>بعد ظهور «المصحف جاهز دون إنترنت»، يمكنك فتح الموقع وقراءة كل السور والبحث واستخدام العلامة والسبحة دون اتصال. التلاوة وصفحات التفسير والأذكار الخارجية ومواقيت الصلاة والقبلة تحتاج الإنترنت. قد تحتاج الخطوط إلى التحميل أثناء أول قراءة. قد يمسح المتصفح النسخة المحفوظة عند تنظيف بياناته أو نقص المساحة.</p>';help.append(item)}
+ const update=()=>{if(state.dataset.ready==='yes')state.textContent=navigator.onLine?'✓ المصحف جاهز دون إنترنت':'✓ دون اتصال: المصحف والسبحة متاحان'};
+ if(!('serviceWorker' in navigator)){state.textContent='القراءة دون إنترنت غير متاحة في هذا المتصفح';return}
+ state.textContent='جارٍ تجهيز المصحف للقراءة دون إنترنت…';
+ navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>{state.dataset.ready='yes';update()}).catch(()=>{state.textContent='لم يكتمل تجهيز النسخة دون إنترنت. افتح الموقع متصلًا وحاول مجددًا.'});
+ addEventListener('online',update);addEventListener('offline',update);
+}
+const obs=new MutationObserver(()=>{init();if(initialized)obs.disconnect()});obs.observe(document.body,{childList:true,subtree:true});init();
+})();
