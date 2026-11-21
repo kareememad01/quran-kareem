@@ -1,8 +1,8 @@
-/* Athar Tayeb v22 additions: reciters with continuous play, Ruqyah section, version badge and safe update button.
+/* Athar Tayeb v23 additions: reciters with continuous play, Ruqyah section, version badge and safe update button.
    Adds behaviour only. The Quran bundle and existing data are not modified. Personal data in localStorage is never touched here. */
 (()=>{
 'use strict';
-const VERSION='22';
+const VERSION='23';
 const AC=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const RECS=[
  {id:'basit',ar:'عبد الباسط عبد الصمد (مرتل)',en:'Abdul Basit Abdus-Samad (Murattal)',folder:'Abdul_Basit_Murattal_192kbps'},
@@ -132,7 +132,7 @@ function badge(){const f=document.querySelector('.site-footer');if(!f||document.
  b.onclick=async()=>{b.disabled=true;b.textContent=L('جارٍ التحديث…','Updating…');try{const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()));const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('quran-kareem-offline-')).map(k=>caches.delete(k)))}catch(e){}
   location.replace(location.pathname+'?fresh='+Date.now()+location.hash)};
  const note=document.createElement('span');note.textContent=' '+L('(علاماتك وملاحظاتك ومفضلتك لا تُمسح)','(your bookmark, notes and favourites are kept)');d.append(b,note);f.append(d)}
-const css=document.createElement('style');css.textContent='.at-audio-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}.at-reciter{min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;max-width:100%}.at-playing{outline:3px solid var(--platform-green,#0a6b55);outline-offset:4px;border-radius:12px}.at-ruq-card{margin:14px 0;padding:16px;border:1px solid rgba(127,127,127,.35);border-radius:16px}.at-ruq-text{font-family:Amiri,serif;font-size:1.5rem;line-height:2.3;direction:rtl;text-align:right}.at-ruq-now{background:rgba(10,107,85,.18);border-radius:8px}.at-version{margin-top:14px}.at-ruq-card h3{margin:0 0 8px}@media(max-width:700px){.qr-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}';document.head.append(css);
+const css=document.createElement('style');css.textContent='.platform-mushaf .qr-audio{display:block!important}.at-audio-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}.at-reciter{min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;max-width:100%}.at-playing{outline:3px solid var(--platform-green,#0a6b55);outline-offset:4px;border-radius:12px}.at-ruq-card{margin:14px 0;padding:16px;border:1px solid rgba(127,127,127,.35);border-radius:16px}.at-ruq-text{font-family:Amiri,serif;font-size:1.5rem;line-height:2.3;direction:rtl;text-align:right}.at-ruq-now{background:rgba(10,107,85,.18);border-radius:8px}.at-version{margin-top:14px}.at-ruq-card h3{margin:0 0 8px}@media(max-width:700px){.qr-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}';document.head.append(css);
 function tick(){try{enhanceAudio();routeRuq();badge()}catch(e){}}
 new MutationObserver(tick).observe(document.body,{childList:true,subtree:true});addEventListener('hashchange',()=>{tick();if(location.hash!=='#/ruqyah'&&st.fromRuq&&st.active)stop('')});tick();
 })();
