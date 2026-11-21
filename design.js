@@ -278,3 +278,43 @@ adSec.querySelector('.px-adhkar-search').addEventListener('input',e=>drawAdhkar(
 const boot=()=>{build();if(built)obs.disconnect()};
 const obs=new MutationObserver(boot);obs.observe(root,{childList:true,subtree:true});boot();
 })();
+
+/* v10: memorial welcome and a quiet, accessible visitor guide. No Quran text changes. */
+(()=>{
+'use strict';
+let done=false;
+const safeGet=(k)=>{try{return localStorage.getItem(k)}catch{return null}};
+const safeSet=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
+function init(){
+ const shell=document.querySelector('.platform-shell');if(done||!shell)return;done=true;
+ const style=document.createElement('style');style.textContent=`
+ .memorial-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 18px;margin:4px 0 22px;border:1px solid color-mix(in srgb,var(--platform-gold) 35%,transparent);border-radius:16px;background:var(--platform-panel);color:var(--platform-green)}
+ .memorial-strip p{margin:0;font-size:.93rem;line-height:1.8}.memorial-strip p small{display:block;color:var(--site-ink-2);font-size:.8rem}.memorial-links{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}.memorial-links button{font-size:.8rem}
+ .memorial-dialog{width:min(570px,calc(100% - 32px));max-height:calc(100dvh - 48px);overflow:auto;padding:0;border:1px solid color-mix(in srgb,var(--platform-gold) 45%,transparent);border-radius:24px;background:var(--platform-panel,#fff);color:var(--site-ink,#233c32);box-shadow:0 24px 100px #0005;text-align:center;direction:rtl}
+ .memorial-dialog::backdrop{background:#102d27a6;backdrop-filter:blur(6px)}.memorial-inner{padding:30px 32px}.memorial-emblem{display:grid;place-items:center;margin:0 auto 18px;width:64px;height:64px;border-radius:50%;background:var(--platform-tint);color:var(--platform-gold);font-size:32px}
+ .memorial-eyebrow{margin:0;color:var(--platform-gold);font-size:.85rem}.memorial-dialog h2{font-family:Amiri,serif;font-size:2.1rem;font-weight:700;line-height:1.7;margin:10px 0;color:var(--platform-green)}.memorial-prayer{font-family:Amiri,serif;font-size:1.45rem;line-height:2.05;margin:10px 0 20px}.memorial-divider{width:60px;height:1px;background:var(--platform-gold);margin:20px auto}
+ .memorial-credit{font-size:.78rem;color:var(--site-ink-2);margin:16px 0 0}.memorial-start{width:100%;min-height:48px}.memorial-preference{display:flex;justify-content:center;align-items:center;gap:9px;text-align:start;font-size:.8rem;line-height:1.8;margin:16px 0;color:var(--site-ink-2)}.memorial-preference input{width:18px;height:18px;accent-color:var(--platform-green);flex-shrink:0}.memorial-dialog button:focus-visible,.memorial-strip button:focus-visible{outline:3px solid var(--platform-gold);outline-offset:3px}
+ .memorial-help-head{display:flex;align-items:center;justify-content:space-between;text-align:start;gap:12px}.memorial-help-head h2{font-size:1.6rem;margin:0}.memorial-help-list{display:grid;gap:10px;text-align:start;margin:20px 0}.memorial-help-list section{padding:13px 15px;border:1px solid var(--site-hairline,#deded5);border-radius:12px}.memorial-help-list h3{margin:0 0 5px;font-size:.95rem;color:var(--platform-green)}.memorial-help-list p{margin:0;font-size:.86rem;line-height:1.9;color:var(--site-ink-2)}.memorial-help-foot{font-size:.8rem;color:var(--site-ink-2);text-align:start;line-height:1.9}
+ @media(max-width:600px){.memorial-strip{align-items:flex-start;flex-direction:column;padding:13px 15px;margin-bottom:16px;gap:9px}.memorial-links{width:100%}.memorial-links button{flex:1}.memorial-inner{padding:25px 21px}.memorial-dialog h2{font-size:1.85rem}.memorial-prayer{font-size:1.3rem}}
+ html[data-focus="true"] .memorial-strip{display:none}
+ `;document.head.append(style);
+ const strip=document.createElement('section');strip.className='memorial-strip';strip.setAttribute('aria-label','إهداء الموقع ودليل الاستخدام');
+ strip.innerHTML='<p>صدقة جارية على أرواح موتانا<small>نسأل الله لهم الرحمة والمغفرة</small></p><div class="memorial-links"><button type="button" class="platform-button memorial-show">رسالة الإهداء</button><button type="button" class="platform-button memorial-guide">دليل الاستخدام</button></div>';
+ shell.querySelector('.platform-hero').before(strip);
+ const welcome=document.createElement('dialog');welcome.className='memorial-dialog';welcome.setAttribute('aria-labelledby','memorial-title');welcome.setAttribute('aria-describedby','memorial-prayer');
+ welcome.innerHTML='<div class="memorial-inner"><div class="memorial-emblem" aria-hidden="true">◇</div><p class="memorial-eyebrow">بسم الله الرحمن الرحيم</p><h2 id="memorial-title">صدقة جارية<br>على أرواح موتانا</h2><div class="memorial-divider" aria-hidden="true"></div><p class="memorial-prayer" id="memorial-prayer">نسأل الله أن يرحمهم ويغفر لهم<br>ويسكنهم فسيح جناته.</p><button type="button" class="platform-button platform-primary memorial-start" autofocus>آمين، ابدأ القراءة</button><label class="memorial-preference"><input type="checkbox">عدم عرض الرسالة تلقائيًا على هذا المتصفح</label><p class="memorial-credit">القرآن الكريم · by Kareem Emad</p></div>';
+ const help=document.createElement('dialog');help.className='memorial-dialog';help.setAttribute('aria-labelledby','memorial-help-title');
+ help.innerHTML='<div class="memorial-inner"><div class="memorial-help-head"><h2 id="memorial-help-title">رفيقك في القراءة والذكر</h2><button type="button" class="platform-button memorial-close" aria-label="إغلاق دليل الاستخدام" autofocus>×</button></div><div class="memorial-help-list"><section><h3>اقرأ على مهل</h3><p>اختر السورة، أو انتقل مباشرة من فهرس الأجزاء والأحزاب والأرباع. اضغط على الآية للاستماع أو حفظ علامة أو فتح التفسير.</p></section><section><h3>عد إلى موضعك</h3><p>احفظ علامة بجوار آية، ثم اختر «متابعة من آخر علامة». العلامة محفوظة على نفس المتصفح، ولا تنتقل تلقائيًا بين الأجهزة.</p></section><section><h3>اجعل القراءة أريح</h3><p>بدّل بين المظهر الليلي والنهاري، وجرّب وضع التركيز. يمكنك تكبير الخط وتصغيره من أدوات المصحف. على لوحة المفاتيح: / للبحث، وEsc لإغلاق النوافذ.</p></section><section><h3>اذكر الله، وارجع إلى المصدر</h3><p>السبحة تحفظ العدّاد على هذا المتصفح. فهرس حصن المسلم والتفسير يفتحان صفحات المصادر في تبويب جديد، وليسا نصوصًا مدمجة داخل الموقع.</p></section></div><p class="memorial-help-foot">تفضيلات القراءة والعلامة وعدّاد السبحة تُحفظ على هذا المتصفح. لا يُطلب موقع جهازك إلا عند الضغط على زر تحديد الموقع للصلاة والقبلة. اقرأ تفاصيل المصادر والخصوصية أسفل الموقع.</p><button type="button" class="platform-button platform-primary memorial-start">العودة للموقع</button></div>';
+ document.body.append(welcome,help);
+ let priorOverflow='',opened=0;
+ [welcome,help].forEach(d=>{d.addEventListener('close',()=>{opened=Math.max(0,opened-1);if(!opened)document.body.style.overflow=priorOverflow});d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close()}})});
+ const open=d=>{if(d.open)return;if(!opened)priorOverflow=document.body.style.overflow;d.showModal();opened++;document.body.style.overflow='hidden'};
+ strip.querySelector('.memorial-show').addEventListener('click',()=>open(welcome));strip.querySelector('.memorial-guide').addEventListener('click',()=>open(help));
+ welcome.querySelector('.memorial-start').addEventListener('click',()=>welcome.close());
+ const pref=welcome.querySelector('input');pref.checked=safeGet('quran.memorial.hidden')==='yes';pref.addEventListener('change',()=>safeSet('quran.memorial.hidden',pref.checked?'yes':'no'));
+ help.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>help.close()));
+ let seen=false;try{seen=sessionStorage.getItem('quran.memorial.seen')==='yes';sessionStorage.setItem('quran.memorial.seen','yes')}catch{}
+ if(!pref.checked&&!seen)open(welcome);
+}
+const obs=new MutationObserver(()=>{init();if(done)obs.disconnect()});obs.observe(document.body,{childList:true,subtree:true});init();
+})();
