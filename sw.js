@@ -1,6 +1,6 @@
 /* Offline Quran reader. No audio, location responses or third-party pages are cached. */
 'use strict';
-const CACHE='quran-kareem-offline-v11';
+const CACHE='quran-kareem-offline-v12';
 const FILES=['index.html','content-1.js','content-2.js','content-3.js','content-divisions.js','design.css','design.js'];
 const base=new URL('./',self.location.href);
 const core=new Set(FILES.map(p=>new URL(p,base).pathname));
