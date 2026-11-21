@@ -1,11 +1,11 @@
 /* Offline Quran reader. No audio, location responses or third-party pages are cached. */
 'use strict';
-const CACHE='quran-kareem-offline-v21';
-const FILES=['index.html','content-1.js','content-2.js','content-3.js','content-divisions.js','design.css','design.js'];
+const CACHE='quran-kareem-offline-v22';
+const FILES=['index.html','content-1.js','content-2.js','content-3.js','content-divisions.js','design.css','design.js','extras.js'];
 const base=new URL('./',self.location.href);
 const core=new Set(FILES.map(p=>new URL(p,base).pathname));
 self.addEventListener('install',event=>{
- event.waitUntil((async()=>{const cache=await caches.open(CACHE);await Promise.all(FILES.map(async p=>{const url=new URL(p,base);const fresh=new URL(url);fresh.searchParams.set('v','21');const response=await fetch(new Request(fresh,{cache:'reload'}));if(!response.ok)throw new Error('Offline asset unavailable');await cache.put(url,response)}));await self.skipWaiting()})());
+ event.waitUntil((async()=>{const cache=await caches.open(CACHE);await Promise.all(FILES.map(async p=>{const url=new URL(p,base);const fresh=new URL(url);fresh.searchParams.set('v','22');const response=await fetch(new Request(fresh,{cache:'reload'}));if(!response.ok)throw new Error('Offline asset unavailable');await cache.put(url,response)}));await self.skipWaiting()})());
 });
 self.addEventListener('activate',event=>{
  event.waitUntil((async()=>{
@@ -19,7 +19,7 @@ self.addEventListener('fetch',event=>{
  const req=event.request,url=new URL(req.url);if(req.method!=='GET')return;
  if(url.origin===base.origin&&url.pathname.startsWith(base.pathname)){
   if(req.mode==='navigate'){
-   event.respondWith(fetch(req).catch(()=>caches.match(new URL('index.html',base).href)));return;
+   event.respondWith(fetch(req.url,{cache:'no-cache'}).catch(()=>caches.match(new URL('index.html',base).href)));return;
   }
   if(core.has(url.pathname)){
    event.respondWith(caches.open(CACHE).then(async cache=>(await cache.match(url.origin+url.pathname))||fetch(req)));return;
