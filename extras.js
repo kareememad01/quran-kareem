@@ -1,8 +1,8 @@
-/* Athar Tayeb v26: continuous full-surah playback for every reciter, surah download, Ruqyah section, version badge and safe update button.
+/* Athar Tayeb v27: continuous full-surah playback for every reciter, surah download, Ruqyah section, version badge and safe update button.
    Adds behaviour only. The Quran bundle and existing data are not modified. Personal data in localStorage is never touched here. */
 (()=>{
 'use strict';
-const VERSION='26';
+const VERSION='27';
 const AC=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const RECS=[
  {id:'basit',ar:'عبد الباسط عبد الصمد (مرتل)',en:'Abdul Basit Abdus-Samad (Murattal)',read:51,base:'https://cdn.mp3quran.net/audio/abdulbasit-abdulsamad/r3/'},
@@ -12,7 +12,12 @@ const RECS=[
  {id:'jalil',ar:'خالد الجليل',en:'Khalid Al-Jalil',read:20,base:'https://cdn.mp3quran.net/audio/khalid-jalil/r1/'},
  {id:'alafasy',ar:'مشاري العفاسي',en:'Mishary Alafasy',read:123,base:'https://cdn.mp3quran.net/audio/mishary-alafasy/r1/'},
  {id:'salimi',ar:'منصور السالمي',en:'Mansour Al-Salimi',read:245,base:'https://cdn.mp3quran.net/audio/mansour-salimi/r1/'},
- {id:'minshawi',ar:'محمد صديق المنشاوي (مرتل)',en:'Muhammad Siddiq Al-Minshawi (Murattal)',read:112,base:'https://cdn.mp3quran.net/audio/muhammad-minshawi/r1/'}
+ {id:'minshawi',ar:'محمد صديق المنشاوي (مرتل)',en:'Muhammad Siddiq Al-Minshawi (Murattal)',read:112,base:'https://cdn.mp3quran.net/audio/muhammad-minshawi/r1/'},
+ {id:'ghamdi',ar:'سعد الغامدي',en:'Saad Al-Ghamdi',read:30,base:'https://cdn.mp3quran.net/audio/saad-ghamdi/r1/'},
+ {id:'sudais',ar:'عبد الرحمن السديس',en:'Abdul Rahman Al-Sudais',read:54,base:'https://cdn.mp3quran.net/audio/abdulrahman-sudais/r1/'},
+ {id:'shuraim',ar:'سعود الشريم',en:'Saud Al-Shuraim',read:31,base:'https://cdn.mp3quran.net/audio/saud-shuraim/r1/'},
+ {id:'ajmi',ar:'أحمد بن علي العجمي',en:'Ahmed ibn Ali Al-Ajmi',read:5,base:'https://cdn.mp3quran.net/audio/ahmad-ajmi/r1/'},
+ {id:'qatami',ar:'ناصر القطامي',en:'Nasser Al-Qatami',read:86,base:'https://cdn.mp3quran.net/audio/nasser-qatami/r1/'}
 ];
 const KEY='athar-reciter-v22';
 const TXT={"2:255": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ", "2:285": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ", "2:286": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ", "1:1": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "1:2": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ", "1:3": "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "1:4": "مَٰلِكِ يَوْمِ ٱلدِّينِ", "1:5": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", "1:6": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ", "1:7": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ", "112:1": "قُلْ هُوَ ٱللَّهُ أَحَدٌ", "112:2": "ٱللَّهُ ٱلصَّمَدُ", "112:3": "لَمْ يَلِدْ وَلَمْ يُولَدْ", "112:4": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ", "113:1": "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ", "113:2": "مِن شَرِّ مَا خَلَقَ", "113:3": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ", "113:4": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ", "113:5": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", "114:1": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ", "114:2": "مَلِكِ ٱلنَّاسِ", "114:3": "إِلَٰهِ ٱلنَّاسِ", "114:4": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ", "114:5": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ", "114:6": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ"};
