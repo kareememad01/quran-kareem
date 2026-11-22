@@ -10,7 +10,7 @@ const button=(text,fn)=>{const b=el('button','platform-button',text);b.type='but
 const css=el('link');css.rel='stylesheet';css.href='./reader-tools.css?v=32';document.head.append(css);
 let dataPromise,dialog,content,returnFocus,mode,token=0,timer,playing=false,paused=false,run;
 const audio=new Audio();audio.preload='none';
-function data(){if(window.AT_READER_DATA)return Promise.resolve(window.AT_READER_DATA);if(!dataPromise)dataPromise=new Promise((resolve,reject)=>{const s=el('script');s.src='./reader-data.js?v=32';s.onload=()=>resolve(window.AT_READER_DATA);s.onerror=()=>{s.remove();dataPromise=null;reject(new Error('data'))};document.head.append(s)});return dataPromise}
+function data(){if(window.AT_READER_DATA)return Promise.resolve(window.AT_READER_DATA);if(!dataPromise)dataPromise=new Promise((resolve,reject)=>{const s=el('script');s.src='./reader-data.js?v=32';s.onload=()=>window.AT_READER_READY.then(resolve,err=>{dataPromise=null;reject(err)});s.onerror=()=>{s.remove();dataPromise=null;reject(new Error('data'))};document.head.append(s)});return dataPromise}
 function current(){const s=parse(document.querySelector('.qr-surah.qr-selected .qr-number')?.textContent)||1;const v=document.querySelector('.platform-verse-active');return {s,a:v?parse(v.querySelector('.qr-ayah-number')?.textContent):1}}
 function stop(){++token;clearTimeout(timer);audio.pause();audio.onended=audio.onerror=null;playing=false;paused=false;run=null}
 function close(){stop();dialog?.close();returnFocus?.focus()}
