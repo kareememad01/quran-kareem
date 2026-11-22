@@ -61,7 +61,7 @@ async function playSeg(k,g){
   const last=st.list&&st.list[st.list.length-1];
   if(st.fromListen&&autoNext()&&last&&last.s<114&&last.a===AC[last.s-1]){
    const ns=last.s+1;st.list=surahList(ns,1);st.i=0;st.segs=segmentsOf(st.list,0);st.segK=0;st.T=null;
-   const sel=document.querySelector('.at-surah-sel');if(sel)sel.value=ns;
+   const sel=document.querySelector('.at-surah-sel');if(sel&&Number(sel.value)===last.s)sel.value=ns;
    playSeg(0,g);return}
   if(st.fromListen&&autoNext()&&last&&last.s===114&&last.a===AC[113]){stop(L('انتهى المصحف كاملًا. تقبّل الله منك.','The whole Quran has finished. May Allah accept it from you.'));return}
   stop(L('انتهت التلاوة','Recitation finished'));return}
