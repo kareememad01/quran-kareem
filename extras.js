@@ -2,7 +2,7 @@
    Adds behaviour only. The Quran bundle and existing data are not modified. Personal data in localStorage is never touched here. */
 (()=>{
 'use strict';
-const VERSION='28';
+const VERSION='29';
 const AC=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const RECS=[
  {id:'basit',ar:'عبد الباسط عبد الصمد (مرتل)',en:'Abdul Basit Abdus-Samad (Murattal)',read:51,base:'https://cdn.mp3quran.net/audio/abdulbasit-abdulsamad/r3/'},
@@ -104,11 +104,13 @@ async function downloadSurah(btn,s0,nm0){
  else{const h=document.querySelector('.qr-reader-head h2');base=((h?h.textContent.trim():'')||L('سورة','Surah')+' '+s)+' - '+L(r.ar,r.en)}
  const name=base.replace(/[\\/:*?"<>|]/g,'')+'.mp3';
  dlBusy=true;const old=btn.textContent;btn.disabled=true;
+ const ctl=new AbortController();let stallT;
+ const arm=()=>{clearTimeout(stallT);stallT=setTimeout(()=>ctl.abort(),30000)};
  try{
-  const res=await fetch(url);if(!res.ok)throw new Error('http');
+  arm();const res=await fetch(url,{signal:ctl.signal});if(!res.ok)throw new Error('http');
   const total=Number(res.headers.get('content-length'))||0;let blob;
   if(res.body&&res.body.getReader){const rd=res.body.getReader(),parts=[];let got=0;
-   for(;;){const x=await rd.read();if(x.done)break;parts.push(x.value);got+=x.value.length;
+   for(;;){const x=await rd.read();if(x.done)break;parts.push(x.value);got+=x.value.length;arm();
     btn.textContent=L('جارٍ التحميل… ','Downloading… ')+Math.floor(got/1048576)+(total?'/'+Math.ceil(total/1048576):'')+L(' م.ب',' MB')}
    blob=new Blob(parts,{type:'audio/mpeg'});
   }else blob=await res.blob();
@@ -116,9 +118,10 @@ async function downloadSurah(btn,s0,nm0){
   setTimeout(()=>URL.revokeObjectURL(a.href),60000);
   setStatus(L('تم تنزيل ','Downloaded ')+name);
  }catch(e){
-  setStatus(L('تعذر التنزيل المباشر؛ فُتح الملف في تبويب جديد، احفظه من قائمة المتصفح.','Direct download failed; the file opened in a new tab, save it from the browser menu.'));
-  window.open(url,'_blank','noopener');
- }finally{dlBusy=false;btn.disabled=false;btn.textContent=old}}
+  if(ctl.signal.aborted)setStatus(L('توقف التنزيل لبطء الاتصال. جرّب مرة أخرى عندما تكون الشبكة أفضل.','Download stalled on a slow connection. Try again when the network is better.'));
+  else{setStatus(L('تعذر التنزيل المباشر؛ فُتح الملف في تبويب جديد، احفظه من قائمة المتصفح.','Direct download failed; the file opened in a new tab, save it from the browser menu.'));
+   window.open(url,'_blank','noopener')}
+ }finally{clearTimeout(stallT);dlBusy=false;btn.disabled=false;btn.textContent=old}}
 
 function enhanceAudio(){const box=document.querySelector('.qr-audio');if(!box||box.querySelector('.at-reciter'))return;
  const strong=box.querySelector('strong');if(strong)strong.textContent=L('اختر القارئ','Choose reciter');
@@ -153,7 +156,7 @@ function listenSection(){const sec=document.createElement('section');sec.id='px-
  cr.append(ra,document.createTextNode(L(' وحقوقها لأصحابها.','; rights belong to their owners.')));sec.append(cr);
  return sec}
 function routeListen(){const nav=document.getElementById('platform-navigation');const main=document.querySelector('main.site-card');if(!nav||!main||!document.getElementById('site-contact'))return;
- if(!document.getElementById('px-listen')){main.append(listenSection());
+ if(!document.getElementById('px-listen')){const sec=listenSection();const f=main.querySelector('.site-footer');if(f)main.insertBefore(sec,f);else main.append(sec);
   const a=document.createElement('a');a.href='#/listen';a.id='nav-listen';a.innerHTML='<span class="platform-nav-icon" aria-hidden="true">♫</span><span class="platform-nav-label">'+L('الاستماع','Listen')+'<small>'+L('قارئ وسورة من غير فتح المصحف','Reciter and surah, no mushaf page')+'</small></span>';nav.append(a)}
  const on=location.hash==='#/listen';const sec=document.getElementById('px-listen');
  if(sec&&sec.dataset.sectionHidden!==String(!on))sec.dataset.sectionHidden=String(!on);
