@@ -101,7 +101,7 @@ document.addEventListener('click',e=>{
 
 function recSelect(){const sel=document.createElement('select');sel.className='at-reciter';sel.setAttribute('aria-label','القارئ');
  for(const r of RECS){const o=document.createElement('option');o.value=r.id;o.textContent=L(r.ar,r.en);sel.append(o)}
- sel.value=rec().id;sel.addEventListener('change',()=>{localStorage.setItem(KEY,sel.value);document.querySelectorAll('.at-reciter').forEach(x=>x.value=sel.value);if(st.active){const l=st.list,i=st.i,f=st.fromRuq,fl=st.fromListen;startFrom(l,i,f);if(fl)st.fromListen=true}});return sel}
+ sel.value=rec().id;sel.addEventListener('change',()=>{localStorage.setItem(KEY,sel.value);document.querySelectorAll('.at-reciter:not(.at-surah-sel)').forEach(x=>x.value=sel.value);if(st.active){const l=st.list,i=st.i,f=st.fromRuq,fl=st.fromListen;startFrom(l,i,f);if(fl)st.fromListen=true}});return sel}
 /* Download the whole surah as one MP3 with the chosen reciter. mp3quran's CDN allows cross-origin fetches, so the browser saves a real file. */
 let dlBusy=false;
 async function downloadSurah(btn,s0,nm0){
