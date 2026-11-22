@@ -2,7 +2,7 @@
    Adds behaviour only. The Quran bundle and existing data are not modified. Personal data in localStorage is never touched here. */
 (()=>{
 'use strict';
-const VERSION='27';
+const VERSION='28';
 const AC=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const RECS=[
  {id:'basit',ar:'عبد الباسط عبد الصمد (مرتل)',en:'Abdul Basit Abdus-Samad (Murattal)',read:51,base:'https://cdn.mp3quran.net/audio/abdulbasit-abdulsamad/r3/'},
@@ -19,6 +19,7 @@ const RECS=[
  {id:'ajmi',ar:'أحمد بن علي العجمي',en:'Ahmed ibn Ali Al-Ajmi',read:5,base:'https://cdn.mp3quran.net/audio/ahmad-ajmi/r1/'},
  {id:'qatami',ar:'ناصر القطامي',en:'Nasser Al-Qatami',read:86,base:'https://cdn.mp3quran.net/audio/nasser-qatami/r1/'}
 ];
+const SURAHS=[{"n":"الفاتحة","e":"Al-Faatiha"},{"n":"البقرة","e":"Al-Baqara"},{"n":"آل عمران","e":"Aal-i-Imraan"},{"n":"النساء","e":"An-Nisaa"},{"n":"المائدة","e":"Al-Maaida"},{"n":"الأنعام","e":"Al-An'aam"},{"n":"الأعراف","e":"Al-A'raaf"},{"n":"الأنفال","e":"Al-Anfaal"},{"n":"التوبة","e":"At-Tawba"},{"n":"يونس","e":"Yunus"},{"n":"هود","e":"Hud"},{"n":"يوسف","e":"Yusuf"},{"n":"الرعد","e":"Ar-Ra'd"},{"n":"ابراهيم","e":"Ibrahim"},{"n":"الحجر","e":"Al-Hijr"},{"n":"النحل","e":"An-Nahl"},{"n":"الإسراء","e":"Al-Israa"},{"n":"الكهف","e":"Al-Kahf"},{"n":"مريم","e":"Maryam"},{"n":"طه","e":"Taa-Haa"},{"n":"الأنبياء","e":"Al-Anbiyaa"},{"n":"الحج","e":"Al-Hajj"},{"n":"المؤمنون","e":"Al-Muminoon"},{"n":"النور","e":"An-Noor"},{"n":"الفرقان","e":"Al-Furqaan"},{"n":"الشعراء","e":"Ash-Shu'araa"},{"n":"النمل","e":"An-Naml"},{"n":"القصص","e":"Al-Qasas"},{"n":"العنكبوت","e":"Al-Ankaboot"},{"n":"الروم","e":"Ar-Room"},{"n":"لقمان","e":"Luqman"},{"n":"السجدة","e":"As-Sajda"},{"n":"الأحزاب","e":"Al-Ahzaab"},{"n":"سبإ","e":"Saba"},{"n":"فاطر","e":"Faatir"},{"n":"يس","e":"Yaseen"},{"n":"الصافات","e":"As-Saaffaat"},{"n":"ص","e":"Saad"},{"n":"الزمر","e":"Az-Zumar"},{"n":"غافر","e":"Al-Ghaafir"},{"n":"فصلت","e":"Fussilat"},{"n":"الشورى","e":"Ash-Shura"},{"n":"الزخرف","e":"Az-Zukhruf"},{"n":"الدخان","e":"Ad-Dukhaan"},{"n":"الجاثية","e":"Al-Jaathiya"},{"n":"الأحقاف","e":"Al-Ahqaf"},{"n":"محمد","e":"Muhammad"},{"n":"الفتح","e":"Al-Fath"},{"n":"الحجرات","e":"Al-Hujuraat"},{"n":"ق","e":"Qaaf"},{"n":"الذاريات","e":"Adh-Dhaariyat"},{"n":"الطور","e":"At-Tur"},{"n":"النجم","e":"An-Najm"},{"n":"القمر","e":"Al-Qamar"},{"n":"الرحمن","e":"Ar-Rahmaan"},{"n":"الواقعة","e":"Al-Waaqia"},{"n":"الحديد","e":"Al-Hadid"},{"n":"المجادلة","e":"Al-Mujaadila"},{"n":"الحشر","e":"Al-Hashr"},{"n":"الممتحنة","e":"Al-Mumtahana"},{"n":"الصف","e":"As-Saff"},{"n":"الجمعة","e":"Al-Jumu'a"},{"n":"المنافقون","e":"Al-Munaafiqoon"},{"n":"التغابن","e":"At-Taghaabun"},{"n":"الطلاق","e":"At-Talaaq"},{"n":"التحريم","e":"At-Tahrim"},{"n":"الملك","e":"Al-Mulk"},{"n":"القلم","e":"Al-Qalam"},{"n":"الحاقة","e":"Al-Haaqqa"},{"n":"المعارج","e":"Al-Ma'aarij"},{"n":"نوح","e":"Nooh"},{"n":"الجن","e":"Al-Jinn"},{"n":"المزمل","e":"Al-Muzzammil"},{"n":"المدثر","e":"Al-Muddaththir"},{"n":"القيامة","e":"Al-Qiyaama"},{"n":"الانسان","e":"Al-Insaan"},{"n":"المرسلات","e":"Al-Mursalaat"},{"n":"النبإ","e":"An-Naba"},{"n":"النازعات","e":"An-Naazi'aat"},{"n":"عبس","e":"Abasa"},{"n":"التكوير","e":"At-Takwir"},{"n":"الإنفطار","e":"Al-Infitaar"},{"n":"المطففين","e":"Al-Mutaffifin"},{"n":"الإنشقاق","e":"Al-Inshiqaaq"},{"n":"البروج","e":"Al-Burooj"},{"n":"الطارق","e":"At-Taariq"},{"n":"الأعلى","e":"Al-A'laa"},{"n":"الغاشية","e":"Al-Ghaashiya"},{"n":"الفجر","e":"Al-Fajr"},{"n":"البلد","e":"Al-Balad"},{"n":"الشمس","e":"Ash-Shams"},{"n":"الليل","e":"Al-Lail"},{"n":"الضحى","e":"Ad-Dhuhaa"},{"n":"الشرح","e":"Ash-Sharh"},{"n":"التين","e":"At-Tin"},{"n":"العلق","e":"Al-Alaq"},{"n":"القدر","e":"Al-Qadr"},{"n":"البينة","e":"Al-Bayyina"},{"n":"الزلزلة","e":"Az-Zalzala"},{"n":"العاديات","e":"Al-Aadiyaat"},{"n":"القارعة","e":"Al-Qaari'a"},{"n":"التكاثر","e":"At-Takaathur"},{"n":"العصر","e":"Al-Asr"},{"n":"الهمزة","e":"Al-Humaza"},{"n":"الفيل","e":"Al-Fil"},{"n":"قريش","e":"Quraish"},{"n":"الماعون","e":"Al-Maa'un"},{"n":"الكوثر","e":"Al-Kawthar"},{"n":"الكافرون","e":"Al-Kaafiroon"},{"n":"النصر","e":"An-Nasr"},{"n":"المسد","e":"Al-Masad"},{"n":"الإخلاص","e":"Al-Ikhlaas"},{"n":"الفلق","e":"Al-Falaq"},{"n":"الناس","e":"An-Naas"}];
 const KEY='athar-reciter-v22';
 const TXT={"2:255": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ", "2:285": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍۢ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ", "2:286": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًۭا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَٰفِرِينَ", "1:1": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "1:2": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ", "1:3": "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "1:4": "مَٰلِكِ يَوْمِ ٱلدِّينِ", "1:5": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", "1:6": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ", "1:7": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ", "112:1": "قُلْ هُوَ ٱللَّهُ أَحَدٌ", "112:2": "ٱللَّهُ ٱلصَّمَدُ", "112:3": "لَمْ يَلِدْ وَلَمْ يُولَدْ", "112:4": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ", "113:1": "قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ", "113:2": "مِن شَرِّ مَا خَلَقَ", "113:3": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ", "113:4": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ", "113:5": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", "114:1": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ", "114:2": "مَلِكِ ٱلنَّاسِ", "114:3": "إِلَٰهِ ٱلنَّاسِ", "114:4": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ", "114:5": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ", "114:6": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ"};
 const pad=(n,l)=>String(n).padStart(l,'0');
@@ -94,12 +95,13 @@ function recSelect(){const sel=document.createElement('select');sel.className='a
  sel.value=rec().id;sel.addEventListener('change',()=>{localStorage.setItem(KEY,sel.value);document.querySelectorAll('.at-reciter').forEach(x=>x.value=sel.value);if(st.active){const l=st.list,i=st.i,f=st.fromRuq;startFrom(l,i,f)}});return sel}
 /* Download the whole surah as one MP3 with the chosen reciter. mp3quran's CDN allows cross-origin fetches, so the browser saves a real file. */
 let dlBusy=false;
-async function downloadSurah(btn){
+async function downloadSurah(btn,s0,nm0){
  if(dlBusy)return;
- const s=selectedSurah();if(!s){setStatus(L('اختر السورة من الفهرس أولًا.','Choose a surah from the index first.'));return}
+ const s=s0||selectedSurah();if(!s){setStatus(L('اختر السورة من الفهرس أولًا.','Choose a surah from the index first.'));return}
  const r=rec(),url=surahUrl(r,s);
- const h=document.querySelector('.qr-reader-head h2');
- const base=((h?h.textContent.trim():'')||L('سورة','Surah')+' '+s)+' - '+L(r.ar,r.en);
+ let base;
+ if(s0&&nm0)base=L('سورة ','Surah ')+nm0+' - '+L(r.ar,r.en);
+ else{const h=document.querySelector('.qr-reader-head h2');base=((h?h.textContent.trim():'')||L('سورة','Surah')+' '+s)+' - '+L(r.ar,r.en)}
  const name=base.replace(/[\\/:*?"<>|]/g,'')+'.mp3';
  dlBusy=true;const old=btn.textContent;btn.disabled=true;
  try{
@@ -129,6 +131,39 @@ function enhanceAudio(){const box=document.querySelector('.qr-audio');if(!box||b
  dlb.onclick=()=>downloadSurah(dlb);row.append(dlb);
  const stp=document.createElement('button');stp.type='button';stp.className='file-button';stp.textContent=L('إيقاف','Stop');stp.onclick=()=>stop(L('تم الإيقاف','Stopped'));row.append(stp);
  const status=document.createElement('p');status.className='at-status site-caption';status.setAttribute('aria-live','polite');const cr=document.createElement('p');cr.className='site-caption';cr.append(document.createTextNode(L('الصوت يُبث ويُنزَّل من ','Audio streams and downloads from ')));const cra=document.createElement('a');cra.textContent='mp3quran.net';cra.href='https://www.mp3quran.net/';cra.target='_blank';cra.rel='noopener noreferrer';cr.append(cra);box.append(row,status,cr)}
+
+/* Standalone listen & download: pick reciter and surah without opening the reading page */
+function listenSection(){const sec=document.createElement('section');sec.id='px-listen';sec.className='platform-contact at-listen';sec.dataset.sectionHidden='true';
+ const h=(tag,cls,txt)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(txt!=null)x.textContent=txt;return x};
+ sec.append(h('h2','platform-section-heading',L('الاستماع والتحميل','Listen and download')));
+ sec.append(h('p','site-caption',L('اختر القارئ والسورة واستمع لها كاملة من غير توقف بين الآيات، أو نزّلها MP3 على جهازك، من غير ما تفتح صفحة القراءة. التشغيل والتحميل يحتاجان إنترنت.','Choose a reciter and a surah, listen to it in full without pauses between verses, or download it as MP3, without opening the reading page. Playback and download need internet.')));
+ const row=h('div','at-audio-row');row.append(recSelect());
+ const ss=document.createElement('select');ss.className='at-reciter';ss.setAttribute('aria-label',L('السورة','Surah'));
+ SURAHS.forEach((x,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=isEn()?((i+1)+'. '+x.e):('سورة '+x.n);ss.append(o)});
+ row.append(ss);
+ const play=h('button','file-button',L('تشغيل السورة كاملة','Play the whole surah'));play.type='button';
+ play.onclick=()=>startFrom(surahList(Number(ss.value),1),0,false);row.append(play);
+ const dl=h('button','file-button',L('تحميل السورة','Download surah'));dl.type='button';
+ dl.onclick=()=>downloadSurah(dl,Number(ss.value),SURAHS[Number(ss.value)-1].n);row.append(dl);
+ const stp=h('button','file-button',L('إيقاف','Stop'));stp.type='button';stp.onclick=()=>stop(L('تم الإيقاف','Stopped'));row.append(stp);
+ sec.append(row);
+ const stp2=h('p','at-status site-caption');stp2.setAttribute('aria-live','polite');sec.append(stp2);
+ const cr=h('p','site-caption');cr.append(document.createTextNode(L('الصوت يُبث ويُنزَّل من ','Audio streams and downloads from ')));
+ const ra=h('a',null,'mp3quran.net');ra.href='https://www.mp3quran.net/';ra.target='_blank';ra.rel='noopener noreferrer';
+ cr.append(ra,document.createTextNode(L(' وحقوقها لأصحابها.','; rights belong to their owners.')));sec.append(cr);
+ return sec}
+function routeListen(){const nav=document.getElementById('platform-navigation');const main=document.querySelector('main.site-card');if(!nav||!main||!document.getElementById('site-contact'))return;
+ if(!document.getElementById('px-listen')){main.append(listenSection());
+  const a=document.createElement('a');a.href='#/listen';a.id='nav-listen';a.innerHTML='<span class="platform-nav-icon" aria-hidden="true">♫</span><span class="platform-nav-label">'+L('الاستماع','Listen')+'<small>'+L('قارئ وسورة من غير فتح المصحف','Reciter and surah, no mushaf page')+'</small></span>';nav.append(a)}
+ const on=location.hash==='#/listen';const sec=document.getElementById('px-listen');
+ if(sec&&sec.dataset.sectionHidden!==String(!on))sec.dataset.sectionHidden=String(!on);
+ const hide=(sel)=>{const el=document.querySelector(sel);if(el&&on&&el.dataset.sectionHidden!=='true')el.dataset.sectionHidden='true'};
+ if(on){hide('.qr-site-search');hide('.qr-sources');
+  document.querySelectorAll('.qr-enter').forEach(e=>{e.dataset.sectionHidden='true'});
+  document.body.dataset.page='listen'}else{document.querySelectorAll('.qr-enter[data-section-hidden=true]').forEach(e=>{if(document.body.dataset.page==='mushaf')delete e.dataset.sectionHidden})}
+ const n=document.getElementById('nav-listen');if(n)n.setAttribute('aria-current',on?'page':'false');
+ if(on&&lastL!==location.hash){lastL=location.hash;requestAnimationFrame(()=>sec&&sec.scrollIntoView({block:'start',behavior:'instant'}))}if(!on)lastL=''}
+let lastL='';
 
 /* Ruqyah section */
 const RUQ=[
@@ -190,6 +225,6 @@ function badge(){const f=document.querySelector('.site-footer');if(!f||document.
   location.replace(location.pathname+'?fresh='+Date.now()+location.hash)};
  const note=document.createElement('span');note.textContent=' '+L('(علاماتك وملاحظاتك ومفضلتك لا تُمسح)','(your bookmark, notes and favourites are kept)');d.append(b,note);f.append(d)}
 const css=document.createElement('style');css.textContent='.platform-mushaf .qr-audio{display:block!important}.at-audio-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}.at-reciter{min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;max-width:100%}.at-playing{outline:3px solid var(--platform-green,#0a6b55);outline-offset:4px;border-radius:12px}.at-ruq-card{margin:14px 0;padding:16px;border:1px solid rgba(127,127,127,.35);border-radius:16px}.at-ruq-text{font-family:Amiri,serif;font-size:1.5rem;line-height:2.3;direction:rtl;text-align:right}.at-ruq-now{background:rgba(10,107,85,.18);border-radius:8px}.at-version{margin-top:14px}.at-ruq-card h3{margin:0 0 8px}@media(max-width:700px){.qr-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}';document.head.append(css);
-function tick(){try{enhanceAudio();routeRuq();badge()}catch(e){}}
+function tick(){try{enhanceAudio();routeRuq();routeListen();badge()}catch(e){}}
 new MutationObserver(tick).observe(document.body,{childList:true,subtree:true});addEventListener('hashchange',()=>{tick();if(location.hash!=='#/ruqyah'&&st.fromRuq&&st.active)stop('')});tick();
 })();
